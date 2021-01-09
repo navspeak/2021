@@ -1,0 +1,12 @@
+Username         Port     From             Latest
+root             tty1                      Thu Apr 26 15:23:50 +0530 2014
+daemon                                     **Never logged in**
+bin                                        **Never logged in**
+sys                                        **Never logged in**
+sync                                       **Never logged in**
+abc1             tty1                      Sat Apr 26 22:10:36 +0530 2014
+pdnsd                                      **Never logged in**
+sshd                                       **Never logged in**
+messagebus                                 **Never logged in**
+bind                                       **Never logged in**
+abc2             tty1                      Sat Apr 26 19:55:22 +0530 2014

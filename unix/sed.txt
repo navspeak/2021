@@ -1,0 +1,158 @@
+$ sed -i.commented '/^#/d;/^$/d' lineswithcomments_blank.txt
+=> modifies lineswithcomments_blank.txt
+=> creates lineswithcomments_blank.txt.commented with original file
+=> /^#/d - delete lines starting with #
+=> /^$/d - deletes empty lines (with no white spaces)
+=> /^\s*/d - deletes empty lines with white spaces too
+
+===
+
+sed 'p' file.txt 
+=> each line matching pattern after 'p' is printed + output from stdout. So each line twice
+sed -n 'p' file.txt
+=> supress stdout
+
+sed -n ' 1,5 p' file | ' 5,$' => 5 to end
+=>lines 1 to 5 (first 5 lines)
+
+sed -n ' /^line/ p' file
+===
+grep -v '4$' file
+=> lines that don't have 4 at end
+===
+grep --color=auto text file
+=> colors search text
+===
+grep '^$' => all empty lines
+grep -v '^$' => non empty lines
+====
+Regex:
+
+Anchors - $, ^
+Ranges - '[A-Za-z_]', [349] =>3 or 4 or 9 not 349
+Boundaries 
+====
+\s = whitespace \S = not whitespace
+\b = word boundry (could include space or hyphen) \B - not word boundary
+
+word-boundary               grep '\bboundary'
+word boundary		    grep '\sboundary'
+has white       space
+nowhitespace
+
+grep 'server\S' => search to not have space after server
+$ grep 'pop[0-9]' lineswithcomments_blank.txt
+pop2
+hhpop7hhh
+
+$ grep '\bpop[0-9]\b' lineswithcomments_blank.txt
+pop2
+
+Quantifiers
+====
+u* = match u 0 or more times  | u+ = u 1 or more times
+u? = 0 or 1 time only (u optional)
+u{3} = u exactly 3 times
+
+grep -v '^\s*#' => starting with "#", "<space>#", "<space><space>#",...
+        '^\s?#' => no space or one space only
+
+$ echo "start    end" >> lineswithcomments_blank.txt
+$ echo "startend" >> lineswithcomments_blank.txt
+$ echo "start end" >> lineswithcomments_blank.txt
+$ grep "start\s?end" lineswithcomments_blank.txt
+[no output]
+$ grep -E "start\s?end" lineswithcomments_blank.txt (egrep for quantifiers)
+startend
+start end
+$ grep -E "start\s{5}end" lineswithcomments_blank.txt (egrep) => exactly 5 spaces
+-vE => reverse and Egrep
+===
+SED with regex
+===
+sed -n '/^root/ p' test
+search & replace
+sed ' [range] s/<string>/<replacement>/ ' file
+note: s/ can be s@ also example:
+sed '/^nav/ s@/bin/bash@/bin/sh@' /etc/passwd 
+=> replace /bin/bash to /bin/sh for nav (only outputs no replace)
+=> g for more than one replacement per line
+
+nl utility => for line #
+
+sed ' 6,9 s/^/(four spaces)/g' myunindented.line
+======================================================
+Replace use -i (in fact -i.bak to create backup)
+========================================================
+ nl parsecsv.sh
+     1  #!/bin/bash
+     2  OLDIFS=$IFS
+     3  IFS=","
+     4  while read product price quantity
+     5  do
+     6  echo -e "\e[1;33m$product \
+     7  =========================\e[0m\n\
+     8  price : \t $print \n \
+     9  Quantity : \t $quantity \n"
+    10  done < $1
+    11  IFS=$OLDIFS
+
+$ sed ' 6,9 s/^/    /g' parsecsv.sh => gives all lines
+#!/bin/bash
+OLDIFS=$IFS
+IFS=","
+while read product price quantity
+do
+    echo -e "\e[1;33m$product \n
+    =========================\e[0m\n\
+    price : \t $print \n \
+    Quantity : \t $quantity \n"
+done < $1
+IFS=$OLDIFS
+
+$ sed -n ' 6,9 s/^/    /g' parsecsv.sh => suppress stdout
+
+$ sed -n ' 6,9 s/^/    /g p' parsecsv.sh => suppress stdout and print matching lines
+    echo -e "\e[1;33m$product \
+    =========================\e[0m\n\
+    price : \t $print \n \
+    Quantity : \t $quantity \n"
+
+======================================================
+append, insert, delete
+=================================================
+$ sed ' /^server 3/ a server ntp.example.com' /etc/ntp.conf (add after)
+$ sed ' /^server 3/ i server ntp.example.com' /etc/ntp.conf  (insert or add before)
+$ sed ' /^server\s[0-9]\.ubuntu/ d' /etc/ntp.conf (delete
+
+cat ntp.sed
+=====
+/^$/d
+/^\s*#/d
+/^server\s[0-9]/i server ntp.example.com
+---
+$ sed -f ntp.sed /etc/ntp.conf
+$ sed -i.bak -f ntp.sed /etc/ntp.conf
+
+===
+scp ntp.sed nav@bespin:/tmp
+ssh -t nav@bespin sudo sed -i.bak -f /tmp/ntp.sed  /etc/ntp.conf 
+===
+substitution groups
+===
+$ echo -e 'Jonas,Bob, 237-98-9878 \nJackSon,Mike,,\nFed,Rog,xxx-xx-xxxx\nAlex,sAllY,567-11-1111'
+Jonas,Bob, 237-98-9878
+JackSon,Mike,,
+Fed,Rog,xxx-xx-xxxx
+Alex,sAllY,567-11-1111
+
+
+$ echo -e 'Jonas,Bob, 237-98-9878 \nJackSon,Mike,,\nFed,Rog,xxx-xx-xxxx\nAlex,sAllY,567-11-1111' | sed 's/\([^,]*\)/\U\1/'
+JONAS,Bob, 237-98-9878
+JACKSON,Mike,,
+FED,Rog,xxx-xx-xxxx
+ALEX,sAllY,567-11-1111
+
+
+
+

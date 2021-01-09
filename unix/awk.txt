@@ -1,0 +1,76 @@
+===
+
+BEGIN { FS= "." ; print "username" }
+$4 > 499 { print $1 }
+END { print "Total Num of Rows " NR }
+
+=== 
+
+BEGIN { FS= "." ; print "username" }
+/^root/ { print $1; count++ }
+END { print "Num of root users" count }
+
+==
+
+$ awk ' {print $1} ' /etc/passwd
+root:!:0:0::/:/usr/bin/ksh
+daemon:!:1:1::/etc:
+
+$ awk -F":" ' {print $1} ' /etc/passwd
+root
+daemon
+
+===
+
+awk -F"," { print toupper($1), tolower($2), $3 ) emp.txt
+vs
+sed 's@\([^,]*\),\([^,]*\)@\U\1\L\2@' emp.txt
+
+===
+
+lastlog -> print all users who never logged in;
+--
+
+Username         Port     From             Latest
+root             tty1                      Thu Apr 26 15:23:50 +0530 2014
+daemon                                     **Never logged in**
+bin                                        **Never logged in**
+sys                                        **Never logged in**
+sync                                       **Never logged in**
+abc1             tty1                      Sat Apr 26 22:10:36 +0530 2014
+pdnsd                                      **Never logged in**
+sshd                                       **Never logged in**
+messagebus                                 **Never logged in**
+bind                                       **Never logged in**
+abc2             tty1                      Sat Apr 26 19:55:22 +0530 2014
+
+--
+cat lastlog.awk:
+--
+BEGIN {
+	printf "%8ss %11s\n","Username", "Login date"
+	print "======================="
+}
+
+!(/Never logged in/ || /^Username/ || /^root/) {
+	cnt++
+	if ( NF == 8 )
+		printf "%8s %2s %3s %4s\n", $1,$5,$4,$8
+	else
+		printf "%8s %2s %3s %4s\n", $1,$6,$5,$9
+}
+
+END {
+	print "======================="
+	print "Total num of Users processed: ", cnt
+}
+
+===
+$ awk -f lastlog.awk lastlog.txt
+Usernames  Login date
+=======================
+    abc1 26 Apr 2014
+    abc2 26 Apr 2014
+=======================
+Total num of Users processed:  2
+===

@@ -1,0 +1,6 @@
+\b[Cc]olou>r\b 
+=> Matches Color, Colour, color, colour
+=> \b - word boundary
+==
+Anchors
+^, $
