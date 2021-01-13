@@ -1,0 +1,33 @@
+PATH=$PATH:/c/Program\ Files/MongoDB/Server/4.2/bin/ 
+
+mongoimport -d pluralsight -c rent --file newyork-rent.csv --type csv --headerline --drop
+
+> db.rent.findOne({}, {name:1, neighbourhood_cleansed:1, host_response_rate:1, price:1, cleansing_fee: 1})
+{
+        "_id" : ObjectId("5ffa5b677dca18a081a1a7b3"),
+        "name" : "Modern NYC",
+        "host_response_rate" : "22%",
+        "neighbourhood_cleansed" : "Washington Heights",
+        "price" : "$100.00"
+}
+----
+
+db.rent.aggregate([
+	{
+	    $match: {
+		price: "$2,000.00"
+	    }
+	},
+	{
+	    $project: {
+		num_price: {
+		  $split: [{$substr: ["$price",1,-1]},","]
+		}
+	     }
+        }
+])
+===
+$substr: ["$price",1,-1] => $2,000 to 2,000
+result: num_price: ["2","000.00"]
+===
+	
