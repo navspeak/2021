@@ -138,7 +138,7 @@ $ sed -i.bak -f ntp.sed /etc/ntp.conf
 scp ntp.sed nav@bespin:/tmp
 ssh -t nav@bespin sudo sed -i.bak -f /tmp/ntp.sed  /etc/ntp.conf 
 ===
-substitution groups
+substitution groups - Uppercasing example
 ===
 $ echo -e 'Jonas,Bob, 237-98-9878 \nJackSon,Mike,,\nFed,Rog,xxx-xx-xxxx\nAlex,sAllY,567-11-1111'
 Jonas,Bob, 237-98-9878
@@ -152,6 +152,30 @@ JONAS,Bob, 237-98-9878
 JACKSON,Mike,,
 FED,Rog,xxx-xx-xxxx
 ALEX,sAllY,567-11-1111
+
+==============
+
+cat myprop.prop
+---
+Key1 = val1
+Key2= 7
+key3=9
+
+sed -i.bak '/^[Kk]ey/ s/[0-9]/1/' myprop.prop
+Key1 = val1
+Key2= 1
+key3=1
+
+sed -i.bak '/^[Kk]ey/ s/=/ = /' myprop.prop
+Key1 = val1
+Key2 =  1
+key3 = 1
+sed -i.bak '/^[Kk]ey/ s/ */ /' myprop.prop
+Key1 = val1
+Key2 = 1
+key3 = 1
+
+
 
 
 
