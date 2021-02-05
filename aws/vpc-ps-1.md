@@ -88,7 +88,7 @@ Note: we could have provided 10.1.0.0/16 instead of the subnet 10.1.254.0/24 if 
 -  Create NAT Instance > Use NAT instance as a bastion host > Configure database & web server instances
 
 ![NAT instance](ps/08-NAT-instance.PNG)
-[Read] (https://docs.aws.amazon.com/vpc/latest/userguide/VPC_NAT_Instance.html#basics)
+[Read](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_NAT_Instance.html#basics)
 
 1. Create Internet gateway __shared-igw__ > attach to "shared-vpc"
 2. Create Subnet __nat-pub__ > associate to shared-vpc > CIDR block 10.2.254.0/24
