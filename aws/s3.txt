@@ -1,0 +1,45 @@
+aws configure:
+[provide AWS Access Key ID and Secret Access Key]
+Default region name:
+=
+Go to IAM > Create Group (s3-users-read-write) > Attach policy (AmazonS3FullAccess) > Create Group
+Add Users to this group (say testuser01)
+===
+cloudshell-user@ip-10-0-167-204 ~]$ aws s3api create-bucket --bucket navspeak-cli --region us-east-1
+{
+    "Location": "/navspeak-cli"
+}
+[cloudshell-user@ip-10-0-167-204 ~]$ aws s3 ls
+2020-12-31 23:25:09 myreplbucketmum12345
+2021-01-15 16:56:54 navspeak-cli
+2020-12-20 16:06:49 navversiong123456
+
+===
+aws s3 cp s3://mybucket/test.txt test.txt
+aws s3 cp test.txt s3://mybucket/test.txt 
+aws s3 cp s3://mybucket/test.txt test.txt s3://mybucket/test.txt test.txt
+===
+NOTE: S3 buckets are shared between various Ec2 instance. cp command can be used to copy files b/w S3 and EC2 
+===
+aws s2 sync s3://mybucket1 s3://mybucket2
+aws s2 sync . s3://mybucket
+aws s2 sync s3://mybucket .
+==
+sync - recursively copy from src to dest (local or s3). Does not create empty folders
+===
+
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volume-types.html
+Hardware assisted virtualization - for moving an EBS to a new AZ (not PV)
+EBS Vol -> create Snapstop
+
+You have an EC2 isntance and EBS vol in us-east1b. You want to move it to us-east-1c
+Find root device Vol -> action -> create snapshot (myc2snap)
+Under EBS > Snapshots > create an Image or vol
+Create image > myec2image > all default but virtualization as HVM vs PV.HVM good for launching different Ec2
+
+EBS = Virtual Hard Disk
+Snapshots exst on S3 = photograph of the disk at apoint in time = snapshotsare incremental. So only delta of change sincelast snapshot move to s3
+root device snapsot best practice to stop instance b4 taking snapshot
+
+
+

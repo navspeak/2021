@@ -1,0 +1,35 @@
+ENI vs ENA vs EFA
+===
+start up script:
+===
+#!/bin/bash
+yum update -y
+yum install httpd -y
+service httpd start
+chkconfig httpd on
+yum install -y amazon-efs-utils
+cd /var/www/html
+echo "<html><h1>Hello! </h1></html>" > index.html
+aws s3 mb s3://tjhljgkh
+aws s3 cp index s3://tjhljgkh
+
+The IP address 169.254. 169.254 is a link-local address and is valid only from the instance
+http://169.254.169.254/latest/user-data . bootstrap.txt => to get the user-data script
+http://169.254.169.254/latest/meta-data/ 
+http://169.254.169.254/latest/meta-data/local-ipv4 
+http://169.254.169.254/latest/meta-data/local-ipv6
+==
+
+What is EFS: is a file storage service for Amazon EC2 instances. (NFS - linuxonly)
+Provides simple interface to create/configure File Systems quickly & easily.
+Use-case File server, shared between EC2 instances
+
+Read EFS vs EBS
+
+Amazon FSx for Windows & Lustre
+
+
+
+
+
+
