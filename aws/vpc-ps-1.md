@@ -98,8 +98,17 @@ Note: we could have provided 10.1.0.0/16 instead of the subnet 10.1.254.0/24 if 
    - Associate the subnet _nat-pub_
  4. Create NAT instance
     - Go to Ec2 dashboard > ElasticIPs > allocate New address
-    - create EC2 instance __nat1__ (ami-a7fdcadc or vpc-nat) > shared-vpc & nat-pub subnet > Network interfaces (primary IP: 10.2.254.254). 
+    - create EC2 instance __nat1__ (ami-a7fdcadc or vpc-nat) > shared-vpc & nat-pub subnet > Network interfaces (primary IP: __10.2.254.254__). 
     - Security Group viz. __NAT instance__ allowing SSH from my IP & All TCP from VPC and on-prem networks i.e. __10.0.0.0/8, 192.168.0.9/17__
     - Once launched. Go to this EC2 instance > Actions > Networking >  __Change Source/Dest. check > Disable__ 
     - Go to the EIP created at 4a step and assocate it with __nat1__ instance & its private IP
+ 5. Route table > __shared__ >  Edit Route > Destination: 0.0.0.0/0   Target: __NAT instance__ (Target will show eni-name / instance-id because aws figured out that there is one elastic network interface associated with the instance. Had there been more than 1, aws would have forced us to use the eni as target)
+ 6. Use __NAT instance__ as a bastion host
+    - ssh to NAT1 instance using its EIP i.e. 10-2-254-254
+    - ssh from NAT1 instance to db1 i.e. ssh ec2-user@n10.2.2.41 -i MyKeyPair.pem (you will need to copy paste from clipboard, but since we have the security group in 4c allowing ssh only from my IP, it's fine)
+    - in db1, curl ifconfig.co => we will get NAT instance's EIP
+    - sudo docker run --name db1 -p 3306:3306 -d benpiper/aws-db1
+ 7. Go to www instance
+    - sudo docker run --name www1 -p 80:80 -d benpiper/aws-www1
+ 8. Browser: http://EIP-of-WWW1 => webpress set up page
     
