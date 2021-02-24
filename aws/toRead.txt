@@ -1,0 +1,5 @@
+Great article comparing the Application and the Network Load Balancer: https://medium.com/containers-on-aws/using-aws-application-load-balancer-and-network-load-balancer-with-ec2-container-service-d0cb0b1d5ae5
+Comparison of Application Load Balancer and Classic Load Balancer: https://cloudacademy.com/blog/application-load-balancer-vs-classic-load-balancer/
+AWS Blog that announces the Network Load Balancer: https://aws.amazon.com/blogs/aws/new-network-load-balancer-effortless-scaling-to-millions-of-requests-per-second/
+AWS Blog that announces the Application Load Balancer: https://aws.amazon.com/blogs/aws/new-aws-application-load-balancer/
+===

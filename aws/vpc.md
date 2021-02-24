@@ -1,7 +1,7 @@
 # Ipv4 addressing 101:
 - <8 bits>.<8 bits>.<8 bits>.<8 bits>
 - Min: 0.0.0.0 | Max; 255.255.255.255
-- uses 32 bits. So, 2^32 = 4,294,967,296 address (cf ipv6 128 bits = 2^128 > 40 undecallion..)
+- uses 32 bits. So, 2^32 = 4,294,967,296 / 4 billion (public only 3.7 bn) address (cf ipv6 128 bits = 2^128 > 40 undecallion..)
 - Old way - Classful:
     * Class A: 1st 8 bits given to Network,so 2^24 addresses
     * Class B: 1st 16 bits given to Network,so 2^16 addresses (65526), and so on
@@ -27,8 +27,8 @@
             * __So in this case we can have 65536 / 16 = 4096 subnets__
     * Private IP ranges:
         * 10.0.0.0   - 10.255.255.255 (10/8 prefix)  => most common in corporate networks
-        * 172.16.0.0  - 172.31.255.255 (172.16/12 prefix) 
-        * 192.168.0.0 - 192.168.255.255 (192.168/16 prefix)
+        * 172.16.0.0  - 172.31.255.255 (172.16/12 prefix) => default aws
+        * 192.168.0.0 - 192.168.255.255 (192.168/16 prefix) => home networks
     * https://cidr.xyz/
     * Largest subnet in aws vpc = /16 (2^16  = 65536 hosts)
     * Smallest subnet in aws vpc = /28 (2^(32-28) = 2^4 = 16 hosts)

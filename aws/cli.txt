@@ -1,0 +1,49 @@
+ 1. aws configure (default profile)
+2. aws configure --profile nav01
+3. $ cat ~/.aws/config
+[default]
+region = us-east-1
+output = table
+[profile nav01]
+region = us-east-1
+
+4. aws ec2 describe-instances \
+     --filters Name=tag-key,Values=Name \
+     --query \
+'Reservations[*].Instances[*].{Instance:InstanceId,AZ:Placement.AvailabilityZone,Name:Tags[?Key==`Name`]|[0].Value}'  \
+    --profile nav01  \
+    --output table
+
+-----------------------------------------------
+|              DescribeInstances              |
++-------------+-----------------------+-------+
+|     AZ      |       Instance        | Name  |
++-------------+-----------------------+-------+
+|  us-east-1a |  i-0660971dc7145cf15  |  www1 |
+|  us-east-1a |  i-04f27ce74158c0af5  |  db1  |
++-------------+-----------------------+-------+
+
+5. aws ec2 describe-instances \
+     --instance-ids i-0660971dc7145cf15 \
+     --filters Name=tag-key,Values=Name \
+     --query \
+'Reservations[0].Instances[0].{Instance:InstanceId,AZ:Placement.AvailabilityZone,Name:Tags[?Key==`Name`]|[0].Value,PrivateIp:PrivateIpAddress,PublicIp:PublicIpAddress,SecurityGroups:SecurityGroups.GroupName,SubnetId:SubnetId,VpcId:VpcId}'  
+
+------------------------------------------------
+|               DescribeInstances              |
++-----------------+----------------------------+
+|  AZ             |  us-east-1a                |
+|  Instance       |  i-0660971dc7145cf15       |
+|  Name           |  www1                      |
+|  PrivateIp      |  10.1.254.10               |
+|  PublicIp       |  50.16.122.98              |
+|  SecurityGroups |  None                      |
+|  SubnetId       |  subnet-077c496a6f82fd30c  |
+|  VpcId          |  vpc-0d4c4d24204270f0b     |
+
+6. aws ec2 describe-instances \
+     --instance-ids i-0660971dc7145cf15 \
+     --filters Name=tag-key,Values=Name \
+     --query \
+'Reservations[0].Instances[0].{PrivateIp:NetworkInterfaces[0].PrivateIpAddress,Groups:NetworkInterfaces[0].Groups[0].GroupName,SubnetId:NetworkInterfaces[0].SubnetId}'
+

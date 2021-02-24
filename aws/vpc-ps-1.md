@@ -98,7 +98,7 @@ Note: we could have provided 10.1.0.0/16 instead of the subnet 10.1.254.0/24 if 
    - Anyway, add a new route: Destination: 0.0.0.0/0 Target: shared-igw (note: you won't see igw from web-vpc here even though we've vpc peering which is for instanceto instancepeering. It doesn't allow igw's to communicate between VPCs)
    - Associate the subnet _nat-pub_
  4. Create NAT instance
-    - Go to Ec2 dashboard > ElasticIPs > allocate New address
+    - Go to Ec2 dashboard > ElasticIPs > allocate New address (NOTE you can have only 5 EIPs by default and ask AWS to increase it)
     - create EC2 instance __nat1__ (ami-a7fdcadc or vpc-nat) > shared-vpc & nat-pub subnet > Network interfaces (primary IP: __10.2.254.254__). 
     - Security Group viz. __NAT instance__ allowing SSH from my IP & All TCP from VPC and on-prem networks i.e. __10.0.0.0/8, 192.168.0.9/17__
     - Once launched. Go to this EC2 instance > Actions > Networking >  __Change Source/Dest. check > Disable__ 

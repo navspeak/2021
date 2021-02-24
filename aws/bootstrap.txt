@@ -1,0 +1,57 @@
+#!/bin/bash
+sudo yum update -y
+wget https://downloads.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
+tar xvf apache-maven-3.6.3-bin.tar.gz
+sudo mv apache-maven-3.6.3 /usr/local/apache-maven
+export M2_HOME=/usr/local/apache-maven
+export M2=$M2_HOME/bin
+export PATH=$M2:$PATH
+
+sudo touch /etc/profile.d/script.sh
+sudo echo export M2_HOME=/usr/local/apache-maven >>  /etc/profile.d/script.sh
+sudo echo export M2=$M2_HOME/bin >> /etc/profile.d/script.sh
+sudo echo export PATH=$M2:$PATH >> /etc/profile.d/script.sh
+sudo echo export C1="profile.d" >> /etc/profile.d/script.sh
+
+sudo echo export M2_HOME=/usr/local/apache-maven >>  /home/ec2-user/.bash_profile
+sudo echo export M2=$M2_HOME/bin >>  /home/ec2-user/.bash_profile
+sudo echo export PATH=$M2:$PATH >>  /home/ec2-user/.bash_profile
+sudo echo export C2="bash_profile" >> /home/ec2-user/.bash_profile
+
+source ~/.bashrc
+sudo rm apache-maven-3.6.3-bin.tar.gz
+sudo yum install -y java-1.8.0-openjdk-devel
+sudo yum install -y git
+echo =============
+echo `java -version`
+echo `mvn --version`
+echo `git --version`
+echo =============
+echo "Navneet's installation done (see /var/log/cloud-init* )"
+echo
+echo
+
+cd /usr/local
+git clone https://github.com/simplesteph/ec2-masterclass-sampleapp.git
+cd ec2-masterclass-sampleapp.git
+mvn clean compile package
+cd target
+java -Xmx700m -jar ec2-masterclass-sample-app-1.0-jar-with-dependencies.jar
+===
+Wordpress:
+===
+#!/bin/bash
+yum install httpd php php-mysql -y
+cd /var/www/html
+wget https://wordpress.org/wordpress-5.1.1.tar.gz
+tar -xzf wordpress-5.1.1.tar.gz
+cp -r wordpress/* /var/www/html/
+rm -rf wordpress
+rm -rf wordpress-5.1.1.tar.gz
+chmod -R 755 wp-content
+chown -R apache:apache wp-content
+service httpd start
+chkconfig httpd on
+===
+
+

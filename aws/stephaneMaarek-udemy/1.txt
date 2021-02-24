@@ -1,0 +1,195 @@
+1. IAM - global service - all region
+2. https://aws.amazon.com/about-aws/global-infrastructure/
+3. Reboot - When you perform a reboot, the same virtual machine instance is rebooted. The original virtual machine instance that was provisioned to you is never returned back to Amazon. The public IP address will not change.
+==
+#!/bin/bash
+# sudo su - don't need in user data as it runs as root
+yum install -y httpd.x86_64
+systemctl start httpd.service
+systemctl enable httpd.service # enable on reboot
+echo "Hello World from $(hostname -f)" > /var/www/html/index.html
+==
+http://169.254.169.254/latest/user-data . bootstrap.txt => to get the user-data script
+http://169.254.169.254/latest/meta-data/
+http://169.254.169.254/latest/meta-data/local-ipv4
+http://169.254.169.254/latest/meta-data/local-ipv6
+==
+
+cross zone loadbalancing
+-
+CLB - Cross-Zone LB - disabled by default, no charges for inter AZ data if enabled
+ALB : always on
+NLB : Disabled by default. Enabled - u pay.
+-
+
+NLB: less latency (100 ms cf ALB 400ms)
+NLB: one static IP per AZ (CLB & ALB had static host name), and supports assigning Elastic IP (helpful for whitelisting specific IP)
+https://docs.aws.amazon.com/elasticloadbalancing/latest/network/target-group-register-targets.html#target-security-groups
+NLB - no security group attached. So instances attached to NLB's instance group see traffic coming from outside not from NLB. So we need to open port from outside instead of NLB SG which doesn't exist.
+Inbound custom TCP 80 (not http) from 0.0.0.0/0
+===
+ACM - AWS Certificate Manager
+Clients can use SNI to specify the hostname they
+reach. Supported for ALB, NLB & CloudFront. (not clb)
+
+Connection Draining for CLB or Deregistration Delay for NLB and ALB.
+It is the time to complete "in-flight requests" while the instance is de-registering or unhealthy.
+At that time it stops sending new request to the instance which is de-registering.
+De-registering delay can be configured to a value b/w 1 to 3600 seconds. Default is 300 secs.Can be disabled by setting it to be 0.
+This is important to set in accordance with a round trip time the EC2 instance takes so that an existing request completes.
+===
+EBS
+- lsblk
+- sudo file -s /dev/xvdb
+/dev/xvdb: data => means no filesystem on the device
+- sudo mkfs -t ext4 /dev/xvdb
+(format the fs)
+- sudo mkdir data
+- sudo /dev/xvdb /data (mount)
+- lblk and see xvdb is mounted to /data
+- cd /data && touch hello.txt
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-using-volumes.html
+The mount point is not automatically preserved after rebooting your instance.
+To automatically mount this EBS volume after reboot:
+- sudo cp /etc/fstab /etc/fstab.orig
+vi /etc/fstab
+add line
+/dev/xvdb /data ext4 defaults,nofail  0  2
+sudo file -s /dev/xvdb
+(to see if file is formatted)
+sudo unmount /data
+lsblk
+sudo mount -a (remount)
+==
+EFS
+==
+
+==
+GP2: 1 GB - 16 TB(burst IOPS to 3000, min 100 & max 16000, 3 iops per GB => depend on size)
+
+IO1 - 4 GB to 16 TB( for iops > 16000. piops. IOPS can be min 100 to max 64000 (for nitro) / 32000 (others IOPS, but in ratio of ipos:volume :: 50:1)
+
+ST1 - 125 GB-16 TB Thruput optimized. Straming workload requiring consistent & fast thruput at low price. Datawarehousing, kafka (40 MB/s per TB) Max IOPs = 500 MB. can burst
+
+SC1 - 125 GB - 16 MB (12 MB/s TB). can burst
+==
+RDS
+===
+- storage backed by EBS (gp2 or io1) | managed service, can't ssh into
+Backup are automatically enabled in RDS
+- Daily full backup of database (during the maintenance window)
+- Transaction logs are backed-up by RDS every 5 mins
+- ability to restore to any point in time (from oldest backup to 5 mins ago)
+- 7 days retention (can be increased to 35 days)
+DB snapshots: manually triggered. Retention of backup as long as you want.
+--
+Read Replicas for read scalility - within AZ, cross AZ, cross region | ASYNC replication |Replicas can be promoted to its own DB
+           Application must update connection string to leverage the read replicas |
+           READ replicas used only for SELECT not INSERT, UPDATE etc | N/w cost incurred across AZ (so if cost is concern use within AZ)
+
+Multi AZ for Disaster Recovery - SYNC Replication to standby instance | One DNS name -automatic failover to standby | no manual intervention
+   Not used for scaling (i.e. can't read or write to standby instance)
+
+Q) Can Read replicas be used as Multi AZ standby -> Ans) YES
+--
+aurora
+--
+elasticache - memcached vd redis (aof persistence) - do not support iam authn
+https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/RedisAOF.html
+- All caches in ElasticCache support SSL in flight encryption but do not support IAM authn. IAM policies on ElastiCache are only used for AWS API level security
+- Redis AUTH: password/token extra security above security group
+- Memcached - SASL based authn
+- Pattern: Lazy loading (all data cached, can become stale),
+  write thru (adds or updates data in cache when written to a db - no stale data), session store (store temp session data in a cache using TTL feature)
+
+Route 53:
+===
+A:  hostname to IPV4,
+AAAA: hostname to IPV6
+cname: hostname to hostname,
+alias: hostname to aws resource
+--
+Route53 can use - public domain names that you can buy. Private domain names that can be resolved by your VPCs
+   - can be used for LB, Heath check, Routing policy: simple, failover, geolocation, latency, weighted, multi value
+   - pay $0.50 per month per hosted zone.
+   - is a global service
+   - nslookup or dig
+   - EC2 lab:
+   userdata:
+   ===
+#!/bin/bash
+yum update -y
+youm install - httpd
+systemctl start httpd.service
+systemctl enable httpd.service
+EC2_AVAIL_ZONE=$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone)
+echo "<h1>Hello Worldforom $(hostname -f) in AZ $EC2_AVAIL_ZONE </h1>" > /var/www/html/index.html
+==
+  DNS Record TTL - web browser will cache A record for TTL (Hight TTL 24 hrs, less traffuc on DNS, possible outdated records)
+                 - is mandatory
+  CNAME: AWS Resource like ELB exposes AWS hostname which you want to map to ur DNS name. Works only for non root domain
+         (eg: something.mydomaol.com => lb1-1234.us-east-2.elb.amazonaws.com). Paid
+  Alias: Points a hostname to an AWS Resource. Works for root + non root domain (aka mydomain.com). Free of charge. Native health check
+  Routing
+    Simple Routing w/ 2 addresses: browser randomly choses one (Route53 returns all A record ip)
+    Weighted Routing Policy: note dig will not be aware that there are multiple ips
+    Latency Routing Policy
+    Failover -primary must have healthchecl
+    Geolocation - can set default location as catch all for all geo not specified
+    Multivalue - browser gets all IPs
+  Health Checks
+    cost (min 0.50 for aws resource. upto 50 free)
+    X heath check failed(def 3) => unhealthy | X health check passed => healthy (def 3)
+    Default Health Check Interval: 30s (can set to Fast 10s - higher cost)
+    About 15 health checkers will check the endpoint health (= one request every 2 sec on avg if  health check int = 30 s)
+    Can have HTTP, TCP & HTTPS health checks (no ssl verification)
+   Route53 is also a registrar like GoDaddy
+    Domain Registar != DNS
+    3rdparty Domain => name server point in the hosted zone
+===
+Golden AMI + bootstrap script = quick instantiation of EC2
+Restore from Snapshot = quick inst. for RDS
+Restore from Snapshot for EBS too (disk already formatted and has data)
+===
+Elastic BeanStack
+ - Free | Managed service from AWS | Pay for underlying instance, RDS etc
+===
+s3
+  - global | max size - 5TB | > 5GB multi part | Metadata (list of text key/value pairs - system or user metadata)
+  - Tags (Unicode up to 10) - useful for security / lifecycle | VersionID
+  - You choose region while creating S3 bucket but s3 is global
+  - You can access a private S3 object when you access from AWS console  (object action > open) but get forbidden when you access using public URL
+    - Answer: presigned URL
+  - Any fle that is not versioned prior to enabling versioning will have version "null".
+   Suspending versioning doesnt delete prev versions
+  - delete delete marker - undo delete. Delete a version - permanently delete
+  S3 Encryption -
+  https://docs.aws.amazon.com/kms/latest/developerguide/services-s3.html
+    1. SSE-S3
+       AWS manages Keys used for enc. Server side enc of obj. AES256. x-amz-server-side-encryption:AES256
+    2. SSE-KMS
+       AWS manages data key but you amnage customer master key | obj enc at server side | adv : control + audit trail
+       x-amz-server-side-encryption:aws:kms
+                    Sym Key               stored in
+       PlainText -------------> Encr Data ----------
+                      |                            |
+            Enc w/ Cust Master Key                 \/
+                    (CMK)                       Bucket
+                      |                            /\
+                      \/       stored as metadata  |
+             Encrypted Data key --------------------
+    3. SSE-C: server side enc using keys managed cust (which AWS discards after enc) | use of HTTPs mandatory | possible using CLI only
+    4. Client Side Encryption: AWS S3 Encryption lib. Encrypt at client side using the lib b4 sending. Decrypt upon retrieval.
+        (can be sym or asym - 256 bits keys)
+        The bucket policy allows our users to read/write files in the bucket, yet we were not able to perform a PutObject API call.
+        Explicit DENY in an IAM policy will take precedence over a bucket policy permission
+
+
+
+
+
+
+
+
+
+

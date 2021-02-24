@@ -1,0 +1,15 @@
+#!/bin/bash
+sudo yum update -y
+# For Linux 2
+sudo amazon-linux-extras install docker
+# For Linux
+# sudo yum install docker
+
+#Start the Docker service.
+sudo service docker start
+
+#Add the ec2-user to the docker group so you can execute Docker commands without using sudo.
+sudo usermod -a -G docker ec2-user
+===
+ docker run hello-world
+ ==

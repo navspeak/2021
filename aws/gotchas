@@ -1,0 +1,66 @@
+bootstrap log:
+/var/log/cloud-init-output.log
+EBS:
+===
+1. GP2
+   - 1GB to 16TB | dev & test env | system boot volumes | low latency interactive apps | recommed fot most workloads
+   - IOPS can burst 10x baseline performance = max 10,000 | Max thru put: 160 MBps
+   - random I/O
+2. IO1
+    - greater than 10,000 IOPs ot 160 MBps of thru put per vol | Expensive
+    - Used for large database workloads, such as: DBs
+    - 4GB - 16 TB
+    - IOPs is provisioned (PIOPS) - Max 32,000 | Max thru put: 500 MBps
+      - random I/O
+3. ST1
+    - streaming workload requiring consistent, fast thru put at a low price like bug data - e.g kafka
+    - can't be a boot vol
+    - 500 GB - 16 TB
+    - Max IOPS is 500 (is not meant for random reads and writes but long continous reads and writes)
+    - Max thru put of 500 MBPS - can burst
+    - Lower price
+4. SC1
+    - Also thruput oriented storage for lage vol of data that is infrequently accessed.
+    - cold storage (infrequent)
+    - can't be boot vol
+    - 500 GB - 16 TB
+    - Max IOPS is 250 (is not meant for random reads and writes but long continous reads and writes)
+    - Max thru put of 500 MBPS - can burst
+    - Lowest price
+
+====
+EC2 types
+1. On demand : short workload, predictable price - billing per second after first min
+2. RI (Reserved Instances) - when u need an instance for a year or more (upto 3) - can benefit from
+        -up to 75% discount compared to on-demand pricing & provide a capacity resevation when used in a specific AZ.
+         (standard vs convertible RI: Convertible has lower discount,can't change family but can sell - need to have a US acc. You can now sell RI too)
+      a - Convertible RI - if u want to change family, OS type, tenancies while benefitting from RI pricing (up to 54% discount)
+      b - Scheduled RI - reserve instance for specific launc period
+       - pay option - All upfront, partial upfront, no upfront - monthly bill
+3. Spot pricing - up to 90 % - bidding
+       - At any time AWS can reclaim the instance from you and sell to higher bidder within 2 mins of notice
+       - Can use with EC2, EMR, cloud formation
+       - use when ur job can tolerate failure. say ur web app can be a mix of spot + on demand instances. no harm if spot goes down.
+       - You may use 3rd parties like SpotInst - claiming to have 80% cost reduction of EC2 for 100% availability.
+          Qubole - to run big data on spot instances
+4. Dedicated Instances: no customer will share the hardware. May share hardware with isntance on same account. No control over instance placement
+   (can move hardware after stop /start)
+5. Dedicated Host
+       - You reserve an entire physical server; control instance placement; visibility to underlying sockets, cores of hardware
+       - BYOL (Bring ur own license) model - where billed based on no.of cores, sockets used. Regulatory req. Expensive. Allocated for 3 year reservation
+
+Gread combo" RI for baseline + On-Demand & spot for peaks
+===
+Spot price : Define max_price
+if (current_spot_price < max_price) {
+   get the instance
+}
+
+if (current_spot_price > max_price) {
+    stop the instance within 2 mins of grace period, so that if any time current spot price falls below ur max, you get the instance
+     you can restart and continue. If you terminate, you get it back it's a new Ec2
+}
+
+spot block - block spot for 1 to 6 hrs without interruption
+Spot fleets = set of Spot Instances+ optional On Demand Instances. The spot fleet will try to meet the target capacity with price constraints
+  Strategies: LowestPrice, diversified, capacityOptimized
