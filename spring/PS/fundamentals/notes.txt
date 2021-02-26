@@ -1,0 +1,10 @@
+1. logging.level.org.springframework= DEBUG in application.properties to see auto config report
+2. @SpringBootConfiguration => @Configuration + @EnableAutoConfiguration + @ComponentScan
+3. spring.profils.active = dev | applications-{profile}.properties
+---
+---
+Entities: objects that live in DB
+- Traditionally defined in persistence.xml
+- spring boot uses entity scanning . Anything under main configuration class annotated with @SpringBoot or @EnableAllConfiguration is searched. Also @Entity
+- @RestController = @Controller + @ResponseBody - can't return model for templating engine like thymeleaf. @ResponseBody serializes the return to Http Body
+
