@@ -1,0 +1,90 @@
+AWS CloudWatch Custom Metrics
+= search metrics
+- metrics like CPUUtization, Network utilization
+- metrics belong to namespaces
+- dimension is an attribute of a metrics (instance id, env, etc). Upto 10 dimension per metrics
+- metrics have timestamp. Can create dashboard with metrics
+
+EC2 detailed moitoring:
+- EC2 metrics have every 5 min by default (basic)
+- detailes monitorinf (for cost) every 1 min . Free tier allows 10 detailed monitoring
+- EC2 Memory usage is not pushed by default (must be pushed from inside the instance as a custom metric)
+EC2 Custom metrics: can send custom metrics using CLI to cloudwatch.
+ Metric resolution: Standard 1 min. High Resolution: up to 1 sec. higher cost
+
+Cloudwatch Dashboard:
+- Global | Can include graph from different regions
+- automatic refresh 10s, 1m...
+- 3 dashboards (up to 50 metrics free)
+- $3/dashboard per month after that
+
+CloudWatch can collect log from:
+- Elastic Beanstalk - collect logs from applications
+- ECS - collect logs from containers. AWS Lambda from functions. VPC flow logs - VPC specific logs.
+ API Gateway, cloudTrail based on filter. CloudWatch log agents for example on EC2 m/c.
+ Route53: Log DNS queries.
+ Cloudwatch logs can go to: Batch export to S3 archival, streams to elastic search cluster
+
+Log Storage:
+  - Log Group: any name usually application name.
+  - Log Streams: within Log group (per application, per log file, per container)
+  - define expiration policies
+  - AWS CLI to tail CloudWatch logs
+  - To send logs to CloudWatch ensure IAM permissions.
+
+CloudWatch can have a metric filter (say specific IP) to trigger alarm
+
+CloudWatch Logs Agent (old) & Unified Agent
+(metrics as well like CPU, netstat, disk IO at granular level. Swap, RAM. SSM parameter store)
+==================================
+https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/QuickStartEC2Instance.html
+- EC2 instance - attach IAM Role with policy CloudWatchLogFullAccess
+    1  sudo yum update -y
+    2  sudo systemctl start awslogsd
+    3  yum install -y awslogs
+    5  cat /etc/awslogs/awscli.conf
+    6  sudo systemctl start awslogsd
+    7  sudo systemctl enable awslogsd.service
+    8  cat /var/log/awslogs.log
+Now go to console cloudwatch log and you will see log group for this created
+
+AWS CloudWatch Alarms
+===================
+- attached to ASG, EC2 actions, SNS notification
+- state: OK, INSUFFICIENT_DATA, ALARM
+
+EC2 Instance Recovery
+=========
+Status Check:
+  - Instance status = check EC2 VM
+  - System Status = check the underlying hardware
+  EC2< --- Monitored by cloudWatch alarm (statusCheckFailed_System). Action: Kicks in EC2 Instance recovery
+Recovery: Same Private, Public, Elastic IP
+
+AWS CloudWatch Events: Cron jobs or Event Pattern
+===
+
+AWS Cloud Trail: enabled by default. = history of events
+==
+
+AWS Config (per region but can be aggregated accross regions and accounts)
+===
+- Helps w/ auditing + recording compliance og=f AWS resources. Can store configuration data into s3 + athena
+= Questions it can answer: Is there unrestricted SSH access to any Security Group, do my buckets have public access
+  how has my ALB configuration changed over time?
+= check things like instances have tag, if not remediation (stop EC2)
+= Reactive
+= Not free ($2 per active rule per region per month)
+= Trail
+==============================
+STS - temp token valid from 15 mins up to 1 hr .
+    - AssumeRole : within your own account or Cross Account Access
+    - AssumeRoleWithSAML
+    - AssumeRoleWithWebIndentity - returns cred for users logged in w/an iDP like Facebook
+       (AWS recommends against using this in favor of Cognito)
+    - GetSessionToken: for MFA, from a user or AWS account root user
+    (refer STS1.png)
+
+https://docs.aws.amazon.com/IAM/latest/UserGuide/tutorial_cross-account-with-roles.html
+==
+aws SSM (Simple System Manager) parameter store

@@ -1,0 +1,19 @@
+1. Only some EC2 instance type have ephemeral drive (instance store) attached to it. t2.micro - does not have.
+ m5d.large has instance store
+
+2. To access Instance drive, you have mount (to say D drive) & first instance drive.
+ When m/c shuts down, the instance drive will be gone (D drive in this case). It is not lost when merely restarted.
+as same vm continues to be used.. Just OS restarts
+
+3. You can't attach EBS from different az.
+   - You will need to mount and format only once
+
+4. EBS Backup
+use case:
+- automatically take regular point-in-time backups from EBS volume and save on AWS S3
+- backup should be optimized ti take the least s3 storage possible
+- encrypt data at rest for backup files
+
+* Snapshots are incremental. Deleting snapsots deletes fata unique to that snapshot only
+* copy EBS snapshots across AZ & regions +  Restore to achieve HA
+*

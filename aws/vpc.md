@@ -4,11 +4,11 @@
 - uses 32 bits. So, 2^32 = 4,294,967,296 / 4 billion (public only 3.7 bn) address (cf ipv6 128 bits = 2^128 > 40 undecallion..)
 - Old way - Classful:
     * Class A: 1st 8 bits given to Network,so 2^24 addresses
-    * Class B: 1st 16 bits given to Network,so 2^16 addresses (65526), and so on
+    * Class B: 1st 16 bits given to Network,so 2^16 addresses (65536), and so on
 - Classless interdomain Routing a.k.a <b>CIDR</b>
     * X.X.X.X/Y where Y is reserved for network
     * 10.10.0.0 / 16 means:
-        * 16 for reserved network. Available = 2^16 = 65526
+        * 16 for reserved network. Available = 2^16 = 65536
         * Question: How many hosts can we have?
             * 1st set: 10.10.0.0 to 10.10.0.255   = 256
             * 2nd set: 10.10.1.0 to 10.10.1.255   = 256

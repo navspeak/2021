@@ -1,3 +1,4 @@
+Draw diagram: https://aws.amazon.com/architecture/icons/ (draw.io)
 1. IAM - global service - all region
 2. https://aws.amazon.com/about-aws/global-infrastructure/
 3. Reboot - When you perform a reboot, the same virtual machine instance is rebooted. The original virtual machine instance that was provisioned to you is never returned back to Amazon. The public IP address will not change.
@@ -38,14 +39,14 @@ At that time it stops sending new request to the instance which is de-registerin
 De-registering delay can be configured to a value b/w 1 to 3600 seconds. Default is 300 secs.Can be disabled by setting it to be 0.
 This is important to set in accordance with a round trip time the EC2 instance takes so that an existing request completes.
 ===
-EBS
+EBS or Instance store
 - lsblk
 - sudo file -s /dev/xvdb
 /dev/xvdb: data => means no filesystem on the device
 - sudo mkfs -t ext4 /dev/xvdb
 (format the fs)
 - sudo mkdir data
-- sudo /dev/xvdb /data (mount)
+- sudo mount /dev/xvdb /data (mount)
 - lblk and see xvdb is mounted to /data
 - cd /data && touch hello.txt
 https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-using-volumes.html
@@ -155,6 +156,8 @@ Elastic BeanStack
  - Free | Managed service from AWS | Pay for underlying instance, RDS etc
 ===
 s3
+- sharing S3 bucket: https://www.youtube.com/watch?v=sfQ8tBuxfRY
+                     https://www.youtube.com/watch?v=zcY0sDPzlyc
   - global | max size - 5TB | > 5GB multi part | Metadata (list of text key/value pairs - system or user metadata)
   - Tags (Unicode up to 10) - useful for security / lifecycle | VersionID
   - You choose region while creating S3 bucket but s3 is global
@@ -183,13 +186,177 @@ s3
         (can be sym or asym - 256 bits keys)
         The bucket policy allows our users to read/write files in the bucket, yet we were not able to perform a PutObject API call.
         Explicit DENY in an IAM policy will take precedence over a bucket policy permission
+===
+MFA Delete: Need to enable versioning
+
+S3 Replication (CRR & SRR)  - bucket can be in different accounts. Delete not replicated. No chaining
+Pre signed URL: SDK or CLI. Validity --expire-in 3600 sec. Users given a pre-signed URL inherit the
+permissions of the person ho generated the URL
+S3 storage class: stored in glacier, first need to restore
+ - Glacier: Bulk retrieval (5-12 hrs), Std (3-5 hrs) andexpedited (1-5 mins)
+ - Glacier deep archive (48 hrs retrieval)
+s3 select & glacier selecr: SQL to filter data at server side. Less traffic.(400% fasterm 80% cheaper)
+(for complex, use athena)
+
+s3 notification:SNS, SQS, lamda function. If two writesare made to a single non versioned obj at same time,
+one event may be lost. To ensure that event notification is sent for every successful write,
+you can enable versioning on your bucket.
+
+Athena: Serverless service to perform analytics. Charged per query and amount of data scanned
+S3 Lock Policies & Vault Lock: WORM
+==
+CloudFront:
+Origns:
+  S3 buckets: For distributing files & caching them at edge | as ingress (to upload filesin S3)
+              enhanced security w/CloudFront Origin Access Identity (OAI)
+   Custom Origin (HTTP)
+        - Application Load Balancer, Ec2 instance, S3 website (must first enable the bucket as static s3 website)
+
+========
+CloudFront:
+- Create s3 bucket - create CloudFront distribution - create OAI -
+limit s3 bucket to be accessed only using this identity
+- Read OAI. Read tempor
+- ClouFront signed URL vs Cookie
+- Global accelerator: AnyCast \ always Oregon region in my case
+===
+Snowball --> import S3 --> s3 lifecycle policy Amazon Glacier
+ AWS Storage Gateway: Bridge on-prem data to say s3. Types: File, Volume and Tape
+- File Gateway
+    - S3 to be accessed using NFS/SMB protocol. Bucker access using IAM roles for each file gateway
+    - MRU data cached in File Gateway
+    - can be mounted on servers
+- Vol Gateway
+    - block storage using iSCSI protocol backed by s3.
+    - backed by ENS snapshots which help restore on-prem vol
+    - Types: Cached vol: low latency access to MRU data | Stored Vol: entire dataset is on prem, schedyiled backup to s3
+
+    |------ Customer premise -------|                |-----------------  AWS -----------------------------|
+    AppServer ---iSCSI--Vol Gateway   <== HTTPS ==>     Storage g/w bucket in s3 ----- Amazon EBS snapshots
+- Tape Gateway
+    - VTL, backup with iSCSI
+
+File Gatweway - Hardware appliance (in addition to virtualization capability)
+Use case: Small Data centre with no virtualization. Need to perform daily NFS backup
+===
+Amazon FSx for Windows (FileServer)
+- EFS for Linux
+- is multi AZ
+- NFS
+
+Amazon FSx for Lustre(Linux+ cluster) = large-scale computing. type of parallel distributed FileSusten for large scale
+computing. Machine Learning, HPC (High perf computing)
+- Seamless integration with s3. Can read S3 as file system thru FSx lustre. Can write the output of the computations to S3
+- Not Multi AZ
+
+==============
+SQS = Simple Queue Service - Std or FIFO (name: *.fifo)
+  - Message visibilty timeout (read about it) - default 30 second - low can cause duplicate.
+  Very high can cause re-processing in case of consumer crsah take long time
+
+Q) visibility timeout is set to 30 sec. The consumer processing it realizes he will take longer than that. So in this case the message will reappear in
+the SQS after 30 secs. The consumer will then process it again, causing duplication. Wht can he do to avoid it?
+- call changeMessageVisibility API to get more time
+
+Dead Message Queue (this is also SQS):
+   With Message Visibilty, you can send back the message to SQS after the consumer fails to consume in a certain time window. This  can cause a loop
+   So we can send to DLQ after MaximumReceives excveeds a threshold. Use: debugging
+Delivery Delays
+FIFO Qs: limited thruput - Only 330 msg/s without batching (3000 msg/s with batching)
+===============
+SNS : one message to many receivers (pub/sub)
+ - Producer -> SNS Topic (100,000) -> Many subscription (10,000,000)
+ CloudWatch alarms send notifications to SNS topics. In fact events by S3, cloudformation etc
+ SNS + SQS: Fan out
+                                    ----> SQS --> Fraud service
+                                   |
+ Buying service ---> SNS Topic   --|
+                                   |
+                                    ----> SQS --> Shipping Service
+
+  SNS can NOW send messages to SQS FIFO queues
+  ================
+  AWS Kinesis => managed alternative to Apache Kafka | streaming data | big data
+  Kinesis Data Streams (data storage as well), Kinensis Analytics, Kinesis Firehose (to ingest data to s3, redshift, elasticSearch, splunk. no storage)
+  Amazon MQ = managed Apache Active MQ
+==============
+AWS Lambda: can provision up to 3GB of RAM per function. Increasing RAM also improves CPU and Network
+Note: Docker does not run on lambda
+Free tier 1,000,000 AWS lambda req & 400,000 GBs of compute time
+Pay per calls => After 1st 1million reqyuest which is free, u pay 20 cents/1 million request thereafter ($0.0000002 per req)
+pay per duration: in increment of 100 ms
+- 1st 400,000 GB-seconds of compute time per month if Free
+   => 400,000 secs if function is 1 GB RAM
+  =>3,2000,000 seconds if function is 128 mb RAM (1 GB/8) - Lesser RAM more seconds
+After that $1.00 for 600,000 GB-sec
+AWS attach an IAM role with policy to createLogGroup and write to CloudWatch
+AWS Lambda Limits:
+  Execution:
+    Memory allocation: 128 MB - 30008 MB (64 MB increments)
+    Max execution time: 900 secons (15 mins)
+    Env Variables (4 KB)
+    Disk Capacity in "function container" (in /tmp): 512 MB
+    Concurrect executions: 1000 can be increased
+  Deployment
+    Lambda fn deployment side (compredded .zip): 50 MB | uncompressed (code + dependencies): 250 MB
+    Can use /tmp to load startup files. Env variable 4 KB
+q) You have a Lambda function that will process data for 25 minutes before successfully completing.
+ The code is working fine in your machine, but in AWS Lambda it just fails with a "timeout" issue after 3 seconds.
+  What should you do? - This won't work in Lambda as maximum timeout is 15 mins'
 
 
 
+ Lambda@Edge: deploy Lambda functions alongside your CloudFront CDN
+ ===
+ DynamoDB
+   - Provisioned throughput:
+    - RCU (Read Capcity Unit): 1RCU = 1 strongly consistent read / 2 eventually cosistent read of 4 KB per second
+    (if you have 10 RCUs u can do 10 strongly consistent reads per sec)
+    - cost $0.00012 per RCU
+    - WCU (Write Capacity Unit) = 1 write 1 KB per sec (cost - 5 times RCU)
+    - Option to set auto-scaling of throughtput to meet demand
+    - Throughput can be exceeded temporarily using "burst credit"
+    - If burst credit are empty, you'll get a provisionedThroughputException
+    - DAX - DynomoDB Accelator
 
+    A DynamoDB Accelerator (DAX) cluster is a cache that fronts your DynamoDB tables and caches
+    the most frequently read values. They help offload the heavy reads on hot keys off of DynamoDB itself,
+    hence preventing the ProvisionedThroughputExceededException
+    ----------------
+    - Seamless cache for DynamoDB, no application re-write. Micro secxonds latency for cached reads. Solves Hot
+    key isssues. TTL for cache = 5 min default. Up 10 nodes in cluster. Multi AZ (3 nodes minimum)
+    Dynamo DB Streams
+    -----------------
+    - Useful if u want cross region replication using streams
+   New Features:
+   - Transactions: all or nothing typres of operations. Coordinated Insert, Update & Delete across multiple tables
+   -  On Demand (more expensive that provisioned. Spikes use cases, very low throughput)
+   - Read more - Global Tables (Cross region replication. Active Active. Must enable Streams).
+   Streams enable DynamoDB to get a changelog and use that changelog to replicate data across regions
+    - Point in time restore
+   - DMS can be used to migrate to DynamorDB
+==================
+API Gateway:
+- Edge Optimized (default) | Regional | Private
+- authn : IAM | Custom Authorizer | Cognito User Pool (Facebook, google etc - no authz)
+---
+AWS cognito:
+  - Cognito Usaer Pool | Federated Identity Pool (OpenID, STS etc) | AWS Cognito Sync (deprecated)
+    Use AppSync instead
+AWS SAM (Serverless Application Model | YAML based)
+===
+Microservice:
+ Synch pattern: API Gateway, Load Balancer
+ Async pattern: SQS, Kinesis, SNS, Lambda Triggers (s3)
+ ==
+Redshift = based on PostgreSQL. Not for OLTP but for OLAP (analytics)
+         = columnar (instead of rows like conventional postgres)
+         = Massively Parallel Query Execution. Pay for what is prpvisioned
+         = Integrates with BI tools like AWS quickshight, tableau etc
+         = upto 128 nodes ypto 160 GB of sapce per node
+Redhift Spectrum: perform queries directly against S3 ( but unlike athena not serverless)
 
-
-
-
-
-
+Snapshots = point i  time backup of the cluster. Stored in S3. Incremental.
+===============
+Neptune - graph database. social n/w | wikipedia
+ElasticSearch (Kibana - visulaization & logstash for log ingestion)

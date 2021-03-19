@@ -1,0 +1,58 @@
+unformatted.json
+===
+{"K1":1,  "K2": "two" , "K3Array" :[{"K4":"Some-val-k4","K5":"Some-another-val5", "K6Array": [{"K7":"valK7","K8":"val8"},{"K7":"valK7_1","K8":"val8_1"},{"K7":"valK7_2","K8":"val8_2"}]},{"K4":"Some-val-k4_2","K5":"Some-another-val5_"},{"K7": "hhh"}]}
+==
+$ awk ' BEGIN { RS = "," } { gsub(/\s/,""); print $0 } ' unformatted.json | sed ' /^$/d ' | sed -e ' s/[{}]//g '
+"K1":1
+"K2":"two"
+"K3Array":["K4":"Some-val-k4"
+"K5":"Some-another-val5"
+"K6Array":["K7":"valK7"
+"K8":"val8"
+"K7":"valK7_1"
+"K8":"val8_1"
+"K7":"valK7_2"
+"K8":"val8_2"]
+"K4":"Some-val-k4_2"
+"K5":"Some-another-val5_"
+"K7":"hhh"]
+===
+awk ' BEGIN { RS = "," } { gsub(/\s/,""); print $0 } ' unformatted.json | sed ' /^$/d ' | sed -e ' s/[{}]//g ' | awk ' BEGIN { RS = "[" } {print $0} '
+===
+all key and values in separate line
+"K1":1
+"K2":"two"
+"K3Array":
+"K4":"Some-val-k4"
+"K5":"Some-another-val5"
+"K6Array":
+"K7":"valK7"
+"K8":"val8"
+"K7":"valK7_1"
+"K8":"val8_1"
+"K7":"valK7_2"
+"K8":"val8_2"]
+"K4":"Some-val-k4_2"
+"K5":"Some-another-val5_"
+"K7":"hhh"]
+
+awk ' BEGIN { RS = "," } { gsub(/\s/,""); print $0 } ' unformatted.json | sed ' /^$/d ' | sed -e ' s/[{}]//g ' | awk ' BEGIN { RS = "[" } {print $0
+} '| sed ' s/]// '
+==
+Produces key value:
+
+"K1":1
+"K2":"two"
+"K3Array":
+"K4":"Some-val-k4"
+"K5":"Some-another-val5"
+"K6Array":
+"K7":"valK7"
+"K8":"val8"
+"K7":"valK7_1"
+"K8":"val8_1"
+"K7":"valK7_2"
+"K8":"val8_2"
+"K4":"Some-val-k4_2"
+"K5":"Some-another-val5_"
+"K7":"hhh"
