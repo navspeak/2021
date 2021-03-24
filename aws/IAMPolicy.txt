@@ -1,0 +1,15 @@
+{
+    "Version": "2021-03-24",
+    "Statement": [
+         {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": "s3:CreateBucket", //service:verb
+            "Resource": "*",
+            "Condition": {
+                "IpAddress": { "aws:SourceIp": "210.75.12.75/16" }
+            }
+         }
+         ]
+    ]
+}

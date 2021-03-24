@@ -74,3 +74,6 @@ Usernames  Login date
 =======================
 Total num of Users processed:  2
 ===
+Remove newline character
+awk ' BEGIN { ORS=" "  } {print $0 } ' formatted.json 
+https://regexr.com/

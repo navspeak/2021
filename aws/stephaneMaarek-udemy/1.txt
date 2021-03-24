@@ -1,8 +1,11 @@
 Draw diagram: https://aws.amazon.com/architecture/icons/ (draw.io)
 1. IAM - global service - all region
 2. https://aws.amazon.com/about-aws/global-infrastructure/
-3. Reboot - When you perform a reboot, the same virtual machine instance is rebooted. The original virtual machine instance that was provisioned to you is never returned back to Amazon. The public IP address will not change.
+3. Reboot - When you perform a reboot, the same virtual machine instance is rebooted.
+The original virtual machine instance that was provisioned to you is never returned back to Amazon.
+The public IP address will not change.
 ==
+
 #!/bin/bash
 # sudo su - don't need in user data as it runs as root
 yum install -y httpd.x86_64

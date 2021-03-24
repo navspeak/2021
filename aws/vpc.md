@@ -31,6 +31,7 @@
         * 192.168.0.0 - 192.168.255.255 (192.168/16 prefix) => home networks
     * https://cidr.xyz/
     * Largest subnet in aws vpc = /16 (2^16  = 65536 hosts)
+    * /x = 2^(32-x) | /32 = 1, /31 = 2, /30 = 4, /28 =2^4 = 16, /27 = 64, /26 = 128, /20 = 4096
     * Smallest subnet in aws vpc = /28 (2^(32-28) = 2^4 = 16 hosts)
     * AWS 1 AZ = 1 subnet
     
