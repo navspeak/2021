@@ -1,8 +1,11 @@
 #### How to run on EC2 (there are better ways, but this works!)
 
-* Create EC2 instance adding followng bash script in user data. Add a security group with following setting:
+* Create EC2 instance adding followng bash script in user data. Add a security group with following settings:
   * Allow SSH from your IP (just in case you want log into the EC2 for troubleshooting)
-  * Allow port 8080 from everywhere (tomcat port being used in this app)
+  * Allow port 8080 from everywhere (8080 is the tomcat port being used in this app)
+  
+> **_NOTE:_**: Following is quite a verbose script. It's purpose: 
+(1) pull the latest code from github (2) builds the sprinboot app (3) starts it as a service. This way when the EC2 instance is up, no manual step is needed (unless Murphy's law prevail)
 
 ```shell script
 #!/bin/bash
@@ -54,7 +57,7 @@ systemctl status login-dev -l
 java -Dspring.profiles.active=dev -jar /usr/local/spring/login/target/login-0.0.1-SNAPSHOT.jar
 ```
 * ssh to the ec2 instance
-* From a browser hit: http://aws-public-ip 
+* From a browser hit: http://aws-public-ip:8080
 
 * Systemctl commands
 ```shell script
