@@ -1,10 +1,10 @@
 #### How to run on EC2 (there are better ways, but this works!)
 
 * Create EC2 instance adding followng bash script in user data. Add a security group with following settings:
-  * Allow SSH from your IP (just in case you want log into the EC2 for troubleshooting)
+  * Allow SSH from your IP (just in case you want to log into the EC2 for troubleshooting)
   * Allow port 8080 from everywhere (8080 is the tomcat port being used in this app)
   
-> **_NOTE:_**: Following is quite a verbose script. It's purpose: 
+> **_NOTE:_** Following is quite a verbose script. It's purpose: 
 (1) pull the latest code from github (2) builds the sprinboot app (3) starts it as a service. This way when the EC2 instance is up, no manual step is needed (unless Murphy's law prevail)
 
 ```shell script
