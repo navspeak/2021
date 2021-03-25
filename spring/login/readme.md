@@ -1,0 +1,2 @@
+- mvn clean package spring-boot:repackage
+- java.exe --Dspring.profiles.active={env} -jar target\login-0.0.1-SNAPSHOT.jar

@@ -3,22 +3,12 @@ sudo yum update -y
 wget https://downloads.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
 tar xvf apache-maven-3.6.3-bin.tar.gz
 sudo mv apache-maven-3.6.3 /usr/local/apache-maven
-export M2_HOME=/usr/local/apache-maven
-export M2=$M2_HOME/bin
-export PATH=$M2:$PATH
+echo "export M2_HOME=/usr/local/apache-maven"'" > ~/config.sh
+echo "export M2=usr/local/apache-maven/bin"'" >> ~/config.sh
+echo "export PATH=$M2:$PATH" >> ~/config.sh
+chmod +x ~/config.sh
+sudo cp ~/config.sh /etc/profile.d/config.sh
 
-sudo touch /etc/profile.d/script.sh
-sudo echo export M2_HOME=/usr/local/apache-maven >>  /etc/profile.d/script.sh
-sudo echo export M2=$M2_HOME/bin >> /etc/profile.d/script.sh
-sudo echo export PATH=$M2:$PATH >> /etc/profile.d/script.sh
-sudo echo export C1="profile.d" >> /etc/profile.d/script.sh
-
-sudo echo export M2_HOME=/usr/local/apache-maven >>  /home/ec2-user/.bash_profile
-sudo echo export M2=$M2_HOME/bin >>  /home/ec2-user/.bash_profile
-sudo echo export PATH=$M2:$PATH >>  /home/ec2-user/.bash_profile
-sudo echo export C2="bash_profile" >> /home/ec2-user/.bash_profile
-
-source ~/.bashrc
 sudo rm apache-maven-3.6.3-bin.tar.gz
 sudo yum install -y java-1.8.0-openjdk-devel
 sudo yum install -y git
@@ -28,7 +18,6 @@ echo `mvn --version`
 echo `git --version`
 echo =============
 echo "Navneet's installation done (see /var/log/cloud-init* )"
-echo
 echo
 
 cd /usr/local

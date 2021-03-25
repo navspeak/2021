@@ -13,3 +13,13 @@
          ]
     ]
 }
+===
+IAM Groups have no ARN
+Policy can be attached to Groups or IAM Users
+Groups can't be nested. However you can put one user in multiple groups
+
+- No policy attached => implicit Deny
+
+
+ --------- Admins-------                  ---NoAccessToS3---
+|   Nav | Shlok | Rashi |                 |   Shlok
