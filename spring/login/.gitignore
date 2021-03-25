@@ -1,0 +1,55 @@
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+#!/bin/bash
+sudo yum update -y
+wget https://downloads.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
+tar xvf apache-maven-3.6.3-bin.tar.gz
+sudo mv apache-maven-3.6.3 /usr/local/apache-maven
+sudo rm apache-maven-3.6.3-bin.tar.gz
+sudo yum install -y java-11-amazon-corretto
+sudo yum install -y git
+
+cd /usr/local
+echo NAVNEET getting from GIT...
+sudo mkdir login
+sudo cd login
+sudo git init
+sudo git remote add origin https://github.com/navspeak/2021.git
+sudo git config core.sparseCheckout true
+sudo echo "/spring/login" > .git/info/sparse-checkout
+sudo git pull origin master
+sudo cd /usr/local/login/spring/login
+sudo /usr/local/apache-maven/bin/mvn clean package spring-boot:repackage
+echo NAVNEET's Installation done
+

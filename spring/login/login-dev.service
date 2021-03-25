@@ -1,0 +1,17 @@
+[Unit]
+Description=Login app as a Service
+After=syslog.target
+
+[Service]
+User=ec2-user
+ExecStart=/bin/java -Dspring.profiles.active=dev -jar /usr/local/login/spring/login/target/login-0.0.1-SNAPSHOT.jar
+SuccessExitStatus=143
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=login-dev
+SuccessExitStatus=143
+workingDirectory=/usr/local/login/spring/login/target
+
+[Install]
+WantedBy=multi-user.target
+
