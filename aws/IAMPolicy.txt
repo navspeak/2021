@@ -18,8 +18,16 @@ IAM Groups have no ARN
 Policy can be attached to Groups or IAM Users
 Groups can't be nested. However you can put one user in multiple groups
 
-- No policy attached => implicit Deny
-
-
- --------- Admins-------                  ---NoAccessToS3---
-|   Nav | Shlok | Rashi |                 |   Shlok
+Trust Policy Example:
+{
+    "Version": "2021-03-24",
+    "Statement": [
+         {
+            "Effect": "Allow",
+            "Principal": "arn:aws:iam::123456789:role/Other_Role",
+            "Action": "sts:AssumeRole", //service:verb
+            "Condition": {}
+         }
+         ]
+    ]
+}

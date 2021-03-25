@@ -57,7 +57,9 @@ systemctl status login-dev -l
 java -Dspring.profiles.active=dev -jar /usr/local/spring/login/target/login-0.0.1-SNAPSHOT.jar
 ```
 * ssh to the ec2 instance
-* From a browser hit: http://aws-public-ip:8080
+* From a browser hit: http://aws-public-ip:8080 to get the app
+* http://aws-public-ip:8080/h2 will bring up h2 console to browse the database (in this example we use in memory h2)
+  - user = sa | password = empty | jdbc URL = jdbc:h2:mem:login
 
 * Systemctl commands
 ```shell script
