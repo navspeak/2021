@@ -65,6 +65,14 @@ AWS CloudWatch Events: Cron jobs or Event Pattern
 ===
 
 AWS Cloud Trail: enabled by default. = history of events
+Mannagement Events  (by default)| Data Events (not default enabled. Lot of logs)
+- Choose either Mutlti region set up is one (current) or all region. No option to select particular region
+- Multi account set up require S3 bucket policy setup
+- Logginng access accross multiple accounts require IAM roles setup
+- only 5 trails
+- can be sent to s3, cloudwatcg, lambda ...
+- use case failed logins, api auth failures, IAM changes, resource modification
+
 ==
 
 AWS Config (per region but can be aggregated accross regions and accounts)

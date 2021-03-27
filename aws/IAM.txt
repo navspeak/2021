@@ -1,0 +1,92 @@
+{
+    "Version": "2021-03-24",
+    "Statement": [
+         {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": "s3:CreateBucket", //service:verb
+            "Resource": "*",
+            "Condition": {
+                "IpAddress": { "aws:SourceIp": "210.75.12.75/16" }
+            }
+         }
+         ]
+    ]
+}
+===
+IAM Groups have no ARN
+Policy can be attached to Groups or IAM Users
+Groups can't be nested. However you can put one user in multiple groups
+
+Trust Policy Example :
+===
+{
+    "Version": "2021-03-24",
+    "Statement": [
+         {
+            "Effect": "Allow",
+            "Principal": "arn:aws:iam::123456789:role/Other_Role",
+            "Action": "sts:AssumeRole", //service:verb
+            "Condition": {}
+         }
+         ]
+    ]
+}
+1. Service Role
+2. Delegated Role
+3. Federated Role
+===
+S3ReadOnlyPolicy
+====
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetLifecycleConfiguration",
+                "s3:GetBucketTagging",
+                ...
+            ],
+            "Resource": "arn:aws:s3:::demo314314/*"
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListStorageLensConfigurations",
+                "s3:ListAccessPointsForObjectLambda",
+                "s3:GetAccessPoint",
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+===
+account:nav (6924XXX)
+Create Role - CrossAccount-S3-ReadOnly ( Trusted Entity - another account rashi01 777XXX) - Copy the ARN
+---
+account:rashi01(777XXXX)
+AssumeRole-S3ReadOnly (in visual editor paste the ARN copied above)
+----
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": "sts:AssumeRole",
+            "Resource": "arn:aws:iam::6924XXX:role/CrossAccount-S3-ReadOnly"
+        }
+    ]
+}
+
+Goto IAM user nav -> attach above policy
+Now go to switch role, provide nav account id & role name to switch to S3 Reod only access to Nav's account from Rashi's
+---
+-Credential Report
+-Access Advisor
+-CloudTrail: all that u can do using console
+-TrustedAdvisor
+-AWS Config - enforce audit reqmt

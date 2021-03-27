@@ -3,7 +3,7 @@ Draw diagram: https://aws.amazon.com/architecture/icons/ (draw.io)
 2. https://aws.amazon.com/about-aws/global-infrastructure/
 3. Reboot - When you perform a reboot, the same virtual machine instance is rebooted.
 The original virtual machine instance that was provisioned to you is never returned back to Amazon.
-The public IP address will not change.
+The public IP address will not change.  (Stop and Restart will change )
 ==
 
 #!/bin/bash
