@@ -1,0 +1,7 @@
+{
+  "host": "",
+  "port": 389,
+  "baseDN": "dc=navspeak,dc=com",
+  "username": "cn=admin,dc=navspeak,dc=com",
+  "password": "password"
+}

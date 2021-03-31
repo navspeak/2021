@@ -1,0 +1,15 @@
+[
+  {
+    "dn": "cn=user1,dc=navs",
+    "cn": "user1-login",
+    "state": "delirim ",    
+    "attribute1": "value1",
+    "attribute2": "value2"
+  },
+  {
+    "dn": "cn=user2,dc=shlok",
+    "cn": "user2-login",
+    "attribute1": "value3",
+    "attribute2": "value4"
+  }
+]

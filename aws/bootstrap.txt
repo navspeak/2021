@@ -1,4 +1,5 @@
 #!/bin/bash
+/* sudo is not needed in user data*/
 sudo yum update -y
 wget https://downloads.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
 tar xvf apache-maven-3.6.3-bin.tar.gz
@@ -46,3 +47,15 @@ chkconfig httpd on
 ===
 
 
+
+#!/bin/bash
+# sudo su - don't need in user data as it runs as root
+yum install -y httpd.x86_64
+systemctl start httpd.service
+systemctl enable httpd.service # enable on reboot
+echo "Hello World from $(hostname -f)" > /var/www/html/index.html
+==
+http://169.254.169.254/latest/user-data . bootstrap.txt => to get the user-data script
+http://169.254.169.254/latest/meta-data/
+http://169.254.169.254/latest/meta-data/local-ipv4
+http://169.254.169.254/latest/meta-data/local-ipv6

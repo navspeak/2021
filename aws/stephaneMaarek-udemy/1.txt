@@ -3,21 +3,10 @@ Draw diagram: https://aws.amazon.com/architecture/icons/ (draw.io)
 2. https://aws.amazon.com/about-aws/global-infrastructure/
 3. Reboot - When you perform a reboot, the same virtual machine instance is rebooted.
 The original virtual machine instance that was provisioned to you is never returned back to Amazon.
-The public IP address will not change.  (Stop and Restart will change )
+The private & public IP address will not change on Reboot.  (Stop and Restart will change )
 ==
+Read EC2 instance types: On demand,Reserved (scheduled/convertible), spot, spot fleet, dedicated host(byol) & dedicated instance - page 50
 
-#!/bin/bash
-# sudo su - don't need in user data as it runs as root
-yum install -y httpd.x86_64
-systemctl start httpd.service
-systemctl enable httpd.service # enable on reboot
-echo "Hello World from $(hostname -f)" > /var/www/html/index.html
-==
-http://169.254.169.254/latest/user-data . bootstrap.txt => to get the user-data script
-http://169.254.169.254/latest/meta-data/
-http://169.254.169.254/latest/meta-data/local-ipv4
-http://169.254.169.254/latest/meta-data/local-ipv6
-==
 
 cross zone loadbalancing
 -

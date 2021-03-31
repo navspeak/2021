@@ -1,0 +1,15 @@
+{
+  "name": "ldapdemo",
+  "version": "1.0.0",
+  "description": "ldap basic server + client",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "navspeak",
+  "license": "ISC",
+  "dependencies": {
+    "ldap-server-mock": "^3.0.0",
+    "ldapjs-client": "^0.1.1"
+  }
+}
