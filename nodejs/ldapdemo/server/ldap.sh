@@ -106,3 +106,5 @@ cn: User Two
 sn: Two
 uid: user2" > /opt/openldap/users.ldif
 ldapadd -x -w password -D "cn=admin,dc=navspeak,dc=com" -f /opt/openldap/users.ldif
+
+# https://raw.githubusercontent.com/linuxautomations/openldap/master/install.sh

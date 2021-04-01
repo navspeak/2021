@@ -61,3 +61,5 @@ node search.js \
  --filter objectClass=*
 
 */
+
+// https://raw.githubusercontent.com/linuxautomations/openldap/master/install.sh

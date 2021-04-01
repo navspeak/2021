@@ -1,0 +1,63 @@
+dn: dc=navspeak,dc=com
+objectclass: top
+objectclass: domain
+objectclass: extensibleObject
+dc: navspeak
+
+# Organizational Units
+dn: ou=groups,dc=navspeak,dc=com
+objectclass: top
+objectclass: organizationalUnit
+ou: groups
+
+dn: ou=people,dc=navspeak,dc=com
+objectclass: top
+objectclass: organizationalUnit
+ou: people
+
+# Create People
+dn: uid=jon,ou=people,dc=navspeak,dc=com
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: Jon Snow
+sn: Jon
+uid: jon
+password: youknownothing
+
+dn: uid=ned,ou=people,dc=navspeak,dc=com
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: Ned Stark
+sn: Ned
+uid: ned
+password: youknownothing
+
+dn: uid=cersei,ou=people,dc=navspeak,dc=com
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: Cersei Lannister
+sn: Cersei
+uid: cersei
+password: youknownothing
+
+# Create Groups
+dn: cn=developers,ou=groups,dc=navspeak,dc=com
+objectclass: top
+objectclass: groupOfUniqueNames
+cn: developers
+ou: developer
+uniqueMember: uid=jon,ou=people,dc=navspeak,dc=com
+uniqueMember: uid=ned,ou=people,dc=navspeak,dc=com
+
+dn: cn=managers,ou=groups,dc=navspeak,dc=com
+objectclass: top
+objectclass: groupOfUniqueNames
+cn: managers
+ou: manager
+uniqueMember: uid=cersei,ou=people,dc=navspeak,dc=com
