@@ -1,0 +1,43 @@
+https://tutorialsdojo.com/amazon-s3/?src=udemy
+SSE-S3
+x-amz-meta-x-amz-key
+x-amz-server-side-encryption
+https://docs.aws.amazon.com/waf/latest/developerguide/what-is-aws-waf.html
+https://tutorialsdojo.com/aws-waf/?src=udemy
+One user can be taken out of group, added to another or be in two groups. Policies can be attached to a Group or Role or User
+
+https://tutorialsdojo.com/aws-cheat-sheet-amazon-dynamodb/
+https://tutorialsdojo.com/amazon-rds-vs-dynamodb/
+https://tutorialsdojo.com/calculating-the-required-read-and-write-capacity-unit-for-your-dynamodb-table/
+
+https://tutorialsdojo.com/amazon-fsx/
+AWS Directory Service AD Connector for easier integration.
+https://youtu.be/4XeqotTYBtY
+--
+To migrate file share configurations from your on-premises file system, you must migrate your files first to Amazon FSx
+before migrating your file share configuration.
+
+Migrate the existing file share configuration to AWS Storage Gateway is incorrect because AWS Storage Gateway is primarily
+used to integrate your on-premises network to AWS but not for migrating your applications.
+Using a file share in Storage Gateway implies that you will still keep your on-premises systems, and not entirely migrate it.
+--
+https://docs.aws.amazon.com/ram/latest/userguide/shareable.html - RAM
+https://tutorialsdojo.com/amazon-vpc/
+--
+IAM in RDS - Postgres & MySQL
+
+https://tutorialsdojo.com/amazon-elasticache/
+https://tutorialsdojo.com/redis-cluster-mode-enabled-vs-disabled-vs-memcached/
+
+Review - q15 - secrets
+17 - Take note that there are certain differences between CloudWatch and Enhanced Monitoring Metrics. CloudWatch gathers
+metrics about CPU utilization from the hypervisor for a DB instance, and Enhanced Monitoring gathers its metrics from an agent on the instance.
+As a result, you might find differences between the measurements, because the hypervisor layer performs a small amount of work.
+Hence, enabling Enhanced Monitoring in RDS is the correct answer in this specific scenario.
+https://tutorialsdojo.com/aws-cheat-sheet-amazon-relational-database-service-amazon-rds/
+https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_Monitoring.OS.html#USER_Monitoring.OS.CloudWatchLogs
+
+--
+
+https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-basic-architecture.html
+SQS default retention 4 days. Max 14 days. Min 60 sec

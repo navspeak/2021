@@ -82,11 +82,11 @@ AssumeRole-S3ReadOnly (in visual editor paste the ARN copied above)
     ]
 }
 
-Goto IAM user nav -> attach above policy
+Goto IAM user in rashi01 (?) -> attach above policy
 Now go to switch role, provide nav account id & role name to switch to S3 Reod only access to Nav's account from Rashi's
 ---
 -Credential Report
--Access Advisor
--CloudTrail: all that u can do using console
--TrustedAdvisor
+-Access Advisor - embedded in groups, roles etc
+-CloudTrail: all that u can do using console - events - last 90 days
+-TrustedAdvisor - free 7 checks. Check category: Cost optimatizon, perf, security
 -AWS Config - enforce audit reqmt
