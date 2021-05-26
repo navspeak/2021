@@ -20,13 +20,19 @@ EC2, IAM basics,
          A single EC2 instance can now be attached to two ENIs, each one on a distinct subnet.
          The ENI (not the instance) is now associated with a subnet.
         =
+        There is a vCPU-based On-Demand Instance limit per region which is why subsequent requests failed.
+        Just submit the limit increase form to AWS and retry the failed requests once approved.
+        https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-lifecycle.html
+        -  By default, when you create an EC2 account with Amazon,
+           your account is limited to a maximum of 20 instances per EC2 region with two default High I/O Instances (hi1. 4xlarge) (not availability zone).
 LB
-    CLB - Cross-Zone LB - disabled by default, no charges for inter AZ data if enabled
-    ALB : Cross-Zone LB  always on, no charges for inter AZ data. read Target group. Microservice use case)
+    CLB - Cross-Zone LB - disabled by default, no charges for inter AZ data if enabled. Layer 4 + 7
+    ALB : Cross-Zone LB  always on, no charges for inter AZ data. read Target group. Microservice use case). Layer 7 only
           Target Group : EC2, Lambda or IP
-    NLB : Cross-Zone LB dDisabled by default. Not free. Enable - u pay. Has static IP (ALB/CLB has static hostname).
+    NLB : Cross-Zone LB dDisabled by default. Not free. Enable - u pay. Has fixed IP per subnet/AZ (ALB/CLB has static hostname). Layer 4 only
           The hosts in Target group see the traffic coming from outside not from NLB. So in the SG of EC2 instance u'll have
           to enable 80 from everywhere unlike ALB and CLB
+          AWS PrivateLink (VPC Endpoint Servces require NLB at Service VPC level)
     GLB - New
     --
     Stickiness - in CLB at LB level configuration otherwise at Target group level (with duration that stickiness will last)
@@ -34,19 +40,24 @@ LB
     --
     ASG -  Launch config (old)/ template (new) .Scale in pr out w/Cloud Watch - Target Tracking Policy (CPU % etc) or Step or Simple Scaling (when alarm is reached) or Scheduled actions
         - Lifecycle hooks
+    - ipv6 not supported by CLB
+    - ALB Target group must use private ip
+    - X-Forwarded-For-XXX headers. True client IP not seen
     =================
 
     NLB: less latency (100 ms cf ALB 400ms)
     NLB: one static IP per AZ (CLB & ALB had static host name), and supports assigning Elastic IP (helpful for whitelisting specific IP)
     https://docs.aws.amazon.com/elasticloadbalancing/latest/network/target-group-register-targets.html#target-security-groups
-    NLB - no security group attached. So instances attached to NLB's instance group see traffic coming from outside not from NLB. So we need to open port from outside instead of NLB SG which doesn't exist.
-    Inbound custom TCP 80 (not http) from 0.0.0.0/0
+    NLB - no security group attached. So instances attached to NLB's instance group see traffic coming from outside not from NLB.
+    So we need to open port from outside instead of NLB SG which doesn't exist.
+    Inbound custom TCP 80 (not http) from 0.0.0.0/0.
+    For bastion hosr
     ===
     ACM - AWS Certificate Manager
     Clients can use SNI to specify the hostname they
     reach. Supported for ALB, NLB & CloudFront. (not clb)
 
-    Connection Draining for CLB or Deregistration Delay for NLB and ALB.
+    Connection Draining for CLB or Deregistration Delay for NLB and ALB. (cf CoolDown period for ASG)
     It is the time to complete "in-flight requests" while the instance is de-registering or unhealthy.
     At that time it stops sending new request to the instance which is de-registering.
     De-registering delay can be configured to a value b/w 1 to 3600 seconds. Default is 300 secs.Can be disabled by setting it to be 0.
@@ -89,6 +100,7 @@ EBS vs Instance Store vs EFS
     SC1 - 125 GB - 16 MB (12 MB/s TB). can burst
     snapsot of unencrypted vol are unenc. So 1st create an encrypted snapshot of unencrypted snapshot and then a vol from that in any region
     - Instance Store
+    - https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html#encryption-by-default - region specific
     - EBS - RAID0 - high IOPs (100,000) but not fault tolerant. RAID 1 - hight fault tolerant. Mirroring
     - EFS = multi AZ => mounted File System. Highly available. Only Linux. NFS. Can scale up. (petabyte scale)
            - Standard Tier (frequently accessed) | EFS-IA (lower price to store higher to retrieve)
@@ -97,9 +109,12 @@ EBS vs Instance Store vs EFS
     ==
 RDS, Elasticache - Memcached or redis
         ===
+        - page 170
+        - https://tutorialsdojo.com/amazon-relational-database-service-amazon-rds/
         - Free Tier: 750 hrs of RDS in a single t2.micro.instance, 20 GB general Purpose SSD, 20GB automated backup storage and any user-initiated DB snapshots
         - storage backed by EBS (gp2 or io1) | managed service, can't ssh into
         Backup are automatically enabled in RDS
+        - storage autoscaling (checkbox) => specify maximum storage threshold | MultiAZ diabled in Freetier
         - Daily full backup of database (during the maintenance window)
         - Transaction logs are backed-up by RDS every 5 mins
         - ability to restore to any point in time (from oldest backup to 5 mins ago)
@@ -108,20 +123,36 @@ RDS, Elasticache - Memcached or redis
         --
         Read Replicas for read scalility - within AZ, cross AZ, cross region | ASYNC replication |Replicas can be promoted to its own DB
                    Application must update connection string to leverage the read replicas |
-                   READ replicas used only for SELECT not INSERT, UPDATE etc | N/w cost incurred across AZ (so if cost is concern use within AZ)
+                   READ replicas used only for SELECT not INSERT, UPDATE etc |
+                   ** RDS Read replicas in same region is free. Cross region is charged.
 
-        Multi AZ for Disaster Recovery - SYNC Replication to standby instance | One DNS name -automatic failover to standby | no manual intervention
-           Not used for scaling (i.e. can't read or write to standby instance)
-        TDE for Oracle and SQL Server
-        IAM auth for MySQL and Postgres
+        - Multi AZ for Disaster Recovery - SYNC Replication to standby instance | One DNS name -automatic failover to standby | no manual intervention
+           Not used for scaling (i.e. can't read or write to standby instance) | Reboot with Failover option to manulaly failover to a standby replica
+        - At rest encryption - defined at launch time AWS KMS -AES256. TDE for Oracle and SQL Server
+        - In flight encryption - SSL certificate. Enforce SSL: PostgreSQL: rds.force_ssl=1
+        IAM auth for MySQL and Postgres (AWSAuthentication Plugin)
+        - https://www.youtube.com/watch?v=o4Sf5Z6E2lk
+        - CloudWatch gathers metrics about CPU utilization from the hypervisor for a DB instance,
+          and Enhanced Monitoring gathers its metrics from an agent on the instance.
+        - CloudWatch gathers metrics about CPU utilization from the hypervisor for a DB instance,
+        and Enhanced Monitoring gathers its metrics from an agent on the instance.
+        - When creating a read replica, there are a few things to consider.
+         First, you must enable automatic backups on the source DB instance by setting the backup retention period to a value other than 0.
 
         Q) Can Read replicas be used as Multi AZ standby -> Ans) YES
         --
         aurora - reader end point and writer end point. auto scaling
+        - 5x perf over MySQL, 3x over postgres
+        - Aurora groyw in increments of 10 GB upto 64 TB. 15 Replicas vs 5 for mysql (faster replication 10 ms lag)
+        - HA native. Failover automatic
         --
-        elasticache - memcached vd redis (AOF persistence) - do not support iam authn
+        elasticache - memcached (sharding i.e. multi node partioning. Not HA. Multi threaded, not persistent) vs
+         - redis (AOF persistence, auto failover. Persistence. Replicas, MultiAZ) - both do not support iam authn
+         - Redis Auth Token when u enable encryption in transit
+         - Architect Leaderboad - Redis Sorted Set
         https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/RedisAOF.html
-        - All caches in ElasticCache support SSL in flight encryption but do not support IAM authn. IAM policies on ElastiCache are only used for AWS API level security
+        - All caches in ElasticCache support SSL in flight encryption but do not support IAM authn.
+         - IAM policies on ElastiCache are only used for AWS API level security
         - Redis AUTH: password/token extra security above security group
         - Memcached - SASL based authn
         - Pattern: Lazy loading (all data cached, can become stale),
@@ -129,11 +160,13 @@ RDS, Elasticache - Memcached or redis
 
 Route 53 (global service): DNS + Domain Registrar
 ===
+    - https://tutorialsdojo.com/amazon-route-53/
     Route 66 + Port 53 = Historic cross-country american highway + port where DNS server requests are addressed
     A:  hostname to IPV4,
     AAAA: hostname to IPV6
     cname: hostname to hostname,
     alias: hostname to aws resource
+    A Pointer (PTR) record resolves an IP address to a fully-qualified domain name (FQDN) as an opposite to what A record does. PTR records are also called Reverse DNS records. 'PTR record' cannot be used to map one domain name to another
     ---
    Route53 can use - public domain names that you can buy. Private domain names that can be resolved by your VPCs
    - can be used for LB, Heath check,
@@ -141,6 +174,7 @@ Route 53 (global service): DNS + Domain Registrar
    - pay $0.50 per month per hosted zone.
    - is a global service
    - nslookup or dig
+   - Read Geoproximity for bias in Route 53 vs Geolocation for affinity https://medium.com/awesome-cloud/aws-amazon-route-53-routing-policies-overview-285cee2d4d3b
    - EC2 lab:
    - DNS Record TTL - web browser will cache A record for TTL (High TTL 24 hrs, less traffic on DNS, possible outdated records)
                  - is mandatory
@@ -149,7 +183,8 @@ Route 53 (global service): DNS + Domain Registrar
   - Alias: Points only to a hostname to an AWS Resource. Works for root + non root domain (aka mydomain.com).
        Free of charge. Native health check
   Routing
-    - Simple Routing w/ 2 addresses (can enter together in one box): browser randomly choses one (Route53 returns all A record ip. Dig will show both IPs as answer). No health check
+    - Simple Routing w/ 2 addresses (can enter together in one box): browser randomly choses one
+       (Route53 returns all A record ip. Dig will show both IPs as answer). No health check
     - Weighted Routing Policy: note dig will not be aware that there are multiple ips (dig will get 1 answer). Health chk
     - Latency Routing Policy
     - Failover Routing-primary must have healthcheck ( Health check - new user gets 50 free)
@@ -166,7 +201,22 @@ Route 53 (global service): DNS + Domain Registrar
    Route53 is also a registrar like GoDaddy
     Domain Registar != DNS
     3rdparty Domain => name server point in the hosted zone (NS)
-    https://tutorialsdojo.com/amazon-route-53/?src=udemy
+    Q) You have purchased a domain on Godaddy and would like to use it with Route 53.
+    What do you need to change to make this work?
+    A) Create Public Hosted zone + update NS of 3rd party registrar
+    Private hosted zones are meant to be used for internal network queries and are not publicly accessible.
+    Public Hosted Zones are meant to be used for people requesting your website through the public internet.
+    Finally, NS records must be updated on the 3rd party registrar.
+    - In a private hosted zone, you can associate Route 53 health checks only with weighted and failover records.
+     - You can use the following routing policies when you create records in a private hosted zone:
+      Simple
+      Failover
+      Multivalue answer
+      Weighted
+ - Total length of DNS name <= 255 bytes
+ - Health check - fast 10 sec - cost (default 30 sec). 15 health checkers (you can see the IP of those machines
+   that ping the instances in b/g to determine the health)
+
 ===
 Architecture discussion
     5 pillars: Costs, performance, reliability, security, operational excellence
@@ -177,6 +227,7 @@ Architecture discussion
      - Free | Managed service from AWS | Pay for underlying instance, RDS etc (read cloudformation)
 ===
 s3
+  - IMP UPDATE: Strongly consistent after PUT: https://aws.amazon.com/s3/consistency/
   - sharing S3 bucket: https://www.youtube.com/watch?v=sfQ8tBuxfRY
                      https://www.youtube.com/watch?v=zcY0sDPzlyc
   - global | max size - 5TB | > 5GB multi part | Metadata (list of text key/value pairs - system or user metadata)
@@ -191,7 +242,12 @@ s3
                    => with 2 prefix 11000 GET requests per sec
   - Multipart upload for 5GB (recommended for 100 MB or above) | S3 Upload performance - Transfer accelerator
   - Byte Range Fetch to download parts of file
-
+  - How to prevent cloudfront front from caching
+  - Depending on your Region, your Amazon S3 website endpoints follow one of these two formats. https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteEndpoints.html
+        s3-website dash (-) Region ‐ http://bucket-name.s3-website.Region.amazonaws.com
+        s3-website dot (.) Region ‐ http://bucket-name.s3-website-Region.amazonaws.com
+        These URLs return the default index document that you configure for the website.
+  - S3 Event notification - only SQS std
   S3 Encryption -
   https://docs.aws.amazon.com/kms/latest/developerguide/services-s3.html
     1. SSE-S3
@@ -199,7 +255,8 @@ s3
     2. SSE-KMS (You need to call AWS KMS encrypt & decrypt API)
        AWS manages data key but you manage customer master key | obj enc at server side | adv : control + audit trail
        x-amz-server-side-encryption:aws:kms
-    3. SSE-C: server side enc using keys managed cust (which AWS discards after enc) | use of HTTPs mandatory | possible using CLI only
+    3. SSE-C: server side enc using keys managed cust (which AWS discards after enc) | use of HTTPs mandatory |
+       possible using CLI only
     4. Client Side Encryption: AWS S3 Encryption lib. Encrypt at client side using the lib b4 sending. Decrypt upon retrieval.
         (can be sym or asym - 256 bits keys)
     The bucket policy allows our users to read/write files in the bucket, yet we were not able to perform a PutObject API call.
@@ -207,16 +264,19 @@ s3
    LAB: How to you prevent upload of objects not encrypted SSE-S3 scheme (create bucket policy)
    https://aws.amazon.com/blogs/security/how-to-prevent-uploads-of-unencrypted-objects-to-amazon-s3/
    For file level use ACL
-   - S3 Website (static Website hosting in bucket policy) - disbale Block Public Access. + add bucket policy to allow GET to anyone
+   - S3 Website (static Website hosting in bucket policy) - disbale Block Public Access. +
+      add bucket policy to allow GET to anyone
     ===
-    MFA Delete: Need to enable versioning
-    S3 Access Log - behind the scene go to permissions - see under ACL S3 Log delivery Groyp has permission to Write and Read
-    S3 Replication (CRR & SRR)  - bucket can be in different accounts. Delete not replicated (marker can be if opted in for). No chaining. Only new Objects replicated
+    MFA Delete: Need to enable versioning. Neededed to permanently delete or disable version. Not to enable version
+    S3 Access Log - behind the scene go to permissions -
+       see under ACL S3 Log delivery Group has permission to Write and Read
+    S3 Replication (CRR & SRR)  - bucket can be in different accounts.
+    Delete not replicated (marker can be if opted in for). No chaining. Only new Objects replicated
     Pre signed URL: SDK or CLI. Validity --expire-in 3600 sec. Users given a pre-signed URL inherit the permissions of the person who generated the URL
     S3 storage class: stored in glacier, first need to restore
-     - Glacier: Bulk retrieval (5-12 hrs), Std (3-5 hrs) andexpedited (1-5 mins)
+     - Glacier: Bulk retrieval (5-12 hrs), Std (3-5 hrs) and expedited (1-5 mins)
      - Glacier deep archive (48 hrs retrieval)
-    s3 select & glacier selecr: SQL to filter data at server side. Less traffic.(400% fasterm 80% cheaper)
+    s3 select & glacier select: SQL to filter data at server side. Less traffic.(400% fasterm 80% cheaper)
     (for complex, use athena)
 
         s3 notification:SNS, SQS, lamda function. If two writes are made to a single non versioned obj at same time,
@@ -225,6 +285,20 @@ s3
 
         Athena: Serverless service to perform analytics. Charged per query and amount of data scanned
         S3 Lock Policies & Vault Lock: WORM
+     S3 Select
+     https://docs.aws.amazon.com/AmazonS3/latest/userguide/lifecycle-transition-general-considerations.html
+     Standard to All (none to standard)
+     Standard - IA after 3o days
+     One-zone to only glacier/Deep Archive
+     Intellizent-Tier to all all except Std and Std-IA
+     Glacier Deep Archive to None
+     ======
+     client = boto3.client('s3')
+     resp = client.select_object_content(
+     Bucket='tdojo-bucket', # Bucket Name.
+     Key='s3-select/tutorialsdojofile.csv', # Object Key.
+     ExpressionType= 'SQL',
+     Expression = "select \"Sample\" from s3object s where s.\"tutorialsdojofile\" in ['A', 'B']"
 ==
 CloudFront:
 Origns:
@@ -232,6 +306,7 @@ Origns:
               enhanced security w/CloudFront Origin Access Identity (OAI)
    Custom Origin (HTTP)
         - Application Load Balancer, Ec2 instance, S3 website (must first enable the bucket as static s3 website)
+   GeoRestriction : WhiteList / BlackList countries. Uses 3rd party Gei-IP DB
 
 ========
 CloudFront: (is a CDN - cached at Edge Location)
@@ -239,20 +314,25 @@ CloudFront: (is a CDN - cached at Edge Location)
         - Create s3 bucket - create CloudFront distribution - create OAI -limit s3 bucket to be accessed only using this identity
         - GeoLocation - whitelist or blacklist
         - CloudFront vs S3 CRR - 1 main diff CloudFront caches maybe with TTL = 1 day. S3 CRR - near real time
-        - Lab - create CloudFront distribution w/ web type of origin (other is RTMP for media) one s3 as origin. Restrict Bucket access.
+        - Lab - create CloudFront "distribution" w/ web type of origin (other is RTMP for media) one s3 as origin. Restrict Bucket access.
               In bucket policy u'll see All to Principal : CloudFront:user Origin Access Identity EXSOMEIDXXX (we can edit and deny access from
               any other principal other than OAI) or just make the files in bucket private, so bucket policy will kick in and allow from OAI associated with
               cloudfront.
               - sometimes when u hit cloudfront URL you'll be redirected to S3 URL which is because of DNS propagation delay. It's just temp
-        - Read OAI. Read tempor
+        - Read OAI. Read tempor (see OAI.PNG)
         - ClouFront signed URL (per file) vs Cookie (multiple file)
+        - CloudFront Field Level encryption
         - Read CloudFront Signed URL vs S3 Pre-Signed URL
+        - Read Price Classes
         - Global accelerator: Use AnyCast not unicase (always Oregon region in my case). Anycast IP will send to nearest Edge Location from where it is Private AWS n/w
           (Global Acc - vs Transfer acc - accessed in S3 under properties - will give new s3 URL)
+        - lAB : create Endpoint group for each region (assign traffic dial 0 -100) and add endpoints (like ec2 elb etc) in the groups (wight 0-255)
   ===
     - Snowball --> import S3 --> s3 lifecycle policy Amazon Glacier (can't directly import to glacier) - Exabytescale. Transfer more than 10 PB
     - snowball edge - computation
-    - AWS Storage Gateway: Bridge on-prem data to say s3 (AWS proprietary stuff). Types: File, Volume and Tape
+    - AWS Storage Gateway: https://docs.aws.amazon.com/storagegateway/latest/userguide/WhatIsStorageGateway.html
+        * https://docs.aws.amazon.com/storagegateway/latest/userguide/StorageGatewayConcepts.html#storage-gateway-cached-concepts
+        * Bridge on-prem data to say s3 (AWS proprietary stuff). Types: File, Volume and Tape
         - File Gateway
             - S3 to be accessed using NFS/SMB protocol. Bucket access using IAM roles for each file gateway
             - MRU data cached in File Gateway
@@ -260,10 +340,7 @@ CloudFront: (is a CDN - cached at Edge Location)
         - Vol Gateway
             - block storage using iSCSI protocol backed by s3.
             - backed by ENS snapshots which help restore on-prem vol
-            - Types: Cached vol: low latency access to MRU data | Stored Vol: entire dataset is on prem, schedyiled backup to s3
-
-            |------ Customer premise -------|                |-----------------  AWS -----------------------------|
-            AppServer ---iSCSI--Vol Gateway   <== HTTPS ==>     Storage g/w bucket in s3 ----- Amazon EBS snapshots
+            - Types: Cached vol (1024 TB = 32*32): low latency access to MRU data | Stored Vol (512 TB = 16 * 32): entire dataset is on prem, scheduled backup to s3
         - Tape Gateway
             - VTL, backup with iSCSI
         - File Gatweway - Hardware appliance: (in addition to virtualization capability)
@@ -289,38 +366,68 @@ CloudFront: (is a CDN - cached at Edge Location)
 SQL, SNS and Kinesis
 ===
     SQS = Simple Queue Service - Std or FIFO (name: *.fifo)
-      - Message visibilty timeout (read about it) - default 30 second - low can cause duplicate.
-      Very high can cause re-processing in case of consumer crsah take long time
-
-    Q) visibility timeout is set to 30 sec. The consumer processing it realizes he will take longer than that. So in this case the message will reappear in
-    the SQS after 30 secs. The consumer will then process it again, causing duplication. Wht can he do to avoid it?
-    - call changeMessageVisibility API to get more time
-
-    Dead Message Queue (this is also SQS):
+      - default retention 4 days (min 1 minute to max 14 days). Less than 246 KB size
+      - can be out of order (best effort ordering). Can have duplicates
+      - Message visibilty timeout (read about it) - default 30 second - low can cause duplicate. (can be set from 0 - 12 hrs)
+        Very high can cause re-processing in case of consumer crsah take long time
+      - consumers: Ec2 or lambda. Must call DeleteMessage API after processing
+      - Auto Scaling based on Q Length (ApproxNumberOfMessages)
+      - Access Policy - IAM or queue owner. In flight encryption enabled by default. Server side encryption AWS KMS.
+      - For most standard queues (depending on queue traffic and message backlog), there can be a maximum of approximately
+         120,000 inflight messages (received from a queue by a consumer, but not yet deleted from the queue).
+      - SQS Temporary Queue Client - For SQS Request Response System. It leverages virtual queue instead of creating & deleting queues
+        (correlationID)
+      - Delay Queue - Delay between Delivery & Receive - DeliveryDelay = Default 0 to 15 mins
+      - Long Polling - 20 seconds
+       Q) visibility timeout is set to 30 sec. The consumer processing it realizes he will take longer than that. So in this case the message will reappear in
+        the SQS after 30 secs. The consumer will then process it again, causing duplication. Wht can he do to avoid it?
+        - call changeMessageVisibility API to get more time
+      - Dead Message Queue (this is also SQS):
        With Message Visibilty, you can send back the message to SQS after the consumer fails to consume in a certain time window. This  can cause a loop
-       So we can send to DLQ after MaximumReceives excveeds a threshold. Use: debugging
-    Delivery Delays
-    FIFO Qs: limited thruput - Only 330 msg/s without batching (3000 msg/s with batching)
+       So we can send to DLQ after MaximumReceives exceeds a threshold. Use: debugging
+      - Delivery Delays
+      - Message timers let you specify an initial invisibility period for a message added to a queue
+      https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-message-timers.html
+      FIFO queues don't support timers on individual messages
+
+    FIFO Qs: Exactly-one delivery but limited thruput - Only 330 msg/s without batching (3000 msg/s with batching)
+        - Deduplication ID: https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/using-messagededuplicationid-property.html
     ===============
     SNS : one message to many receivers (pub/sub)
+     - Data not persisted. Lost if not consumed
      - Producer -> SNS Topic (100,000) -> Many subscription (10,000,000)
      CloudWatch alarms send notifications to SNS topics. In fact events by S3, cloudformation etc
      SNS + SQS: Fan out
-     SNS can NOW send messages to SQS FIFO queues
-      ================
-      AWS Kinesis => managed alternative to Apache Kafka | streaming data | big data
-         - Kinesis Streams: low latency streaming ingest at scale (Delivery stream)
-            - shards . Retention 1 day default to 365 days
-            - Producers: Kinesis Agent (java app to send data to stream), SDK or KPL (Kinesis Prod Lib)
-            - Consumers: AWS KInesis Data Analusys, Firehose, KCL (Kinesis Client Lib)
+     SNS FIFO
+     S3 event = subscriber SNS fanout to SQS
+     SNS - message filtering (json policy) on subsription tab (see hands on)
+     SNS can NOW send messages to SQS FIFO queues (?)
+    ================
+    AWS Kinesis => managed alternative to Apache Kafka | streaming data | big data | Clickstream, telemetry
+    - Kinesis Streams: low latency streaming ingest at scale (Delivery stream)
+            - more shards = more thruput
+            - billing per shard provisioned
+            - shards . Retention 1 day default to 365 days. Ability to replay. Immutabilty. Data that sharessame partition goes in same shard
+            - Producers / KPL : Kinesis Agent (java app to send data to stream), SDK or KPL (Kinesis Prod Lib)
+                - Records (partition ket + Data Blob up to 1 MB) - 1 MB/secs or 1000 Msg/sec/shard. On consumer side also seq no.
+            - Consumers: AWS KInesis Data Analysys, Firehose, KCL (Kinesis Client Lib)
             - aws kinesis put-record --stream-name test --partition-key user1 --data "signip"
               (also shard iterator to read)
-         - Kinesis Firehose: (Dilvery stream) - no storage
+            - One shard provides an ingest capacity of 1MB/second or 1000 records/second and an output capacity of 2MB/second.
+    - Kinesis Firehose: (Dilvery stream) - no storage (pg 385)
             - source : Direct PUT or other source OR Kinesis Data Stream
-            - Dest: load streams into S3, Readshift, ElasticSearch, Splunk, HTTP endpoint or 3rd part provider
-         - Kinesis Analytics: perform real-time analytics on streams using SQL
-      Kinesis Data Streams (data storage as well), Kinensis Analytics, Kinesis Firehose (to ingest data to s3, redshift, elasticSearch, splunk. no storage)
-      Amazon MQ = managed Apache Active MQ
+                  - Near Real Time (60 sec latency for non full batches) /32 MB of data at a time
+                  - reads record upto 1 MB at a time from Kinesis Data Stream, cloudwatch logs/events, IoT
+                  - Transformed by Lambda and batch writes to Dest
+            - Dest: load streams into 1) S3, 2) Readshift (via s3), 3) ElasticSearch, 4) Splunk, HTTP endpoint or 3rd part provider 5) Custom HTTP Endpoinyt
+            - Failed messafe to S3
+    - Kinesis Data Streams (data storage as well 1 day to 365 days. You can raise data retention period to up to 7 days by
+      enabling extended data retention or up to 365 by enabling long-term data retention using the console, the CLI or the API call)
+      1 shard => 1 MB/s write (2 MB/sec read) or 1000 Data Recods/sec (2000)
+    - Kinensis Analytics (to analyze data stream with SQL or Apache Flink) - perform real-time analytics on streams using SQL. Serverless
+    - Kinesis Firehose (or Deliver stream) (to ingest data to s3, redshift, elasticSearch, splunk. no storage. Near real time delivery)
+    - Kinesis Video Streams (capture, process and store video streams)
+    - Amazon MQ = managed Apache Active MQ
 ==============
     AWS Lambda: can provision up to 3GB of RAM per function. Increasing RAM also improves CPU and Network
     Note: Docker does not run on lambda
@@ -334,13 +441,13 @@ SQL, SNS and Kinesis
     AWS attach an IAM role with policy to createLogGroup and write to CloudWatch
     AWS Lambda Limits:
       Execution:
-        Memory allocation: 128 MB - 30008 MB (64 MB increments)
+        Memory allocation: 128 MB - 10gb  (64 MB increments)
         Max execution time: 900 secons (15 mins)
         Env Variables (4 KB)
         Disk Capacity in "function container" (in /tmp): 512 MB
         Concurrect executions: 1000 can be increased
       Deployment
-        Lambda fn deployment side (compredded .zip): 50 MB | uncompressed (code + dependencies): 250 MB
+        Lambda fn deployment side (compresseded .zip): 50 MB | uncompressed (code + dependencies): 250 MB
         Can use /tmp to load startup files. Env variable 4 KB
     q) You have a Lambda function that will process data for 25 minutes before successfully completing.
      The code is working fine in your machine, but in AWS Lambda it just fails with a "timeout" issue after 3 seconds.
@@ -397,7 +504,7 @@ Redshift = based on PostgreSQL. Not for OLTP but for OLAP (analytics)
          = columnar (instead of rows like conventional postgres)
          = Massively Parallel Query Execution. Pay for what is prpvisioned
          = Integrates with BI tools like AWS quickshight, tableau etc
-         = upto 128 nodes ypto 160 GB of sapce per node
+         = upto 128 nodes upto 160 GB of space per node
 Redhift Spectrum: perform queries directly against S3 ( but unlike athena not serverless)
 
 Snapshots = point i  time backup of the cluster. Stored in S3. Incremental.
@@ -405,4 +512,40 @@ Snapshots = point i  time backup of the cluster. Stored in S3. Incremental.
 Neptune - graph database. social n/w | wikipedia
 ElasticSearch (Kibana - visulaization & logstash for log ingestion)
 ===
-Important note for EC2 metrics: CloudWatch does not collect memory utilization and disk space usage metrics right from the get go. You need to install CloudWatch Agent in your instances first to retrieve these metrics.
+Important note for EC2 metrics: CloudWatch does not collect memory utilization and disk space usage metrics right from the get go.
+You need to install CloudWatch Agent in your instances first to retrieve these metrics.
+Test 2 - Marek q18
+==
+Kinesis Data Stream - Batch:
+===
+Use batch messages
+=====
+
+Amazon Kinesis Data Streams (KDS) is a massively scalable and durable real-time data streaming service.
+KDS can continuously capture gigabytes of data per second from hundreds of thousands of sources such as website clickstreams, database event streams,
+financial transactions, social media feeds, IT logs, and location-tracking events.
+The data collected is available in milliseconds to enable real-time analytics use cases such as real-time dashboards, real-time anomaly detection, dynamic pricing, and more.
+
+Kinesis Data Streams Overview:  via - https://aws.amazon.com/kinesis/data-streams/
+
+When a host needs to send many records per second (RPS) to Amazon Kinesis,
+simply calling the basic PutRecord API action in a loop is inadequate. To reduce overhead and increase throughput,
+the application must batch records and implement parallel HTTP requests.
+This will increase the efficiency overall and ensure you are optimally using the shards.
+
+By default, the 2MB/second/shard output is shared between all of the applications consuming data from the stream.
+You should use enhanced fan-out if you have multiple consumers retrieving data from a stream in parallel.
+With enhanced fan-out developers can register stream consumers to use enhanced fan-out and receive their own 2MB/second pipe of read throughput per shard,
+and this throughput automatically scales with the number of shards in a stream.
+=
+By default, all DynamoDB tables are encrypted under an AWS owned customer master key (CMK), which do not write to CloudTrail logs -
+AWS owned CMKs are a collection of CMKs that an AWS service owns and manages for use in multiple AWS accounts.
+Although AWS owned CMKs are not in your AWS account, an AWS service can use its AWS owned CMKs to protect the resources in your account.
+
+You do not need to create or manage the AWS owned CMKs. However, you cannot view, use, track, or audit them. You are not charged a monthly fee or
+usage fee for AWS owned CMKs and they do not count against the AWS KMS quotas for your account. The key rotation strategy for an AWS owned CMK is
+determined by the AWS service that creates and manages the CMK. All DynamoDB tables are encrypted. There is no option to enable or disable encryption
+for new or existing tables.
+By default, all tables are encrypted under an AWS owned customer master key (CMK) in the DynamoDB service account.
+However, you can select an option to encrypt some or all of your tables under a customer-managed CMK or the AWS managed CMK for DynamoDB in your account.
+==

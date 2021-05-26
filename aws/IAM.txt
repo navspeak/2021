@@ -88,5 +88,5 @@ Now go to switch role, provide nav account id & role name to switch to S3 Reod o
 -Credential Report
 -Access Advisor - embedded in groups, roles etc
 -CloudTrail: all that u can do using console - events - last 90 days
--TrustedAdvisor - free 7 checks. Check category: Cost optimatizon, perf, security
+-Trusted Advisor - free 7 checks. Check category: Cost optimatizon, perf, security
 -AWS Config - enforce audit reqmt

@@ -9,7 +9,7 @@ class Program {
         t.TestCase1();
     }
 
-    public static OrgChart getLowestCommonManager(
+    public static OrgChart getLowestCommonManager_______(
             OrgChart topManager, OrgChart reportOne, OrgChart reportTwo) {
         Deque<OrgChart> h1 = getHierarchy(topManager, reportOne);
         Deque<OrgChart> h2 = getHierarchy(topManager, reportTwo);
@@ -25,7 +25,36 @@ class Program {
     }
 
 
-    private static Deque<OrgChart> getHierarchy(OrgChart topManager, OrgChart reportee){
+
+    public static OrgChart getLowestCommonManager(
+            OrgChart topManager, OrgChart reportOne, OrgChart reportTwo) {
+        OrgChart ret = getLowestCommonManager_helper(topManager, reportOne, reportTwo);
+        return ret == null ? topManager: ret;
+    }
+    public static OrgChart getLowestCommonManager_helper(
+            OrgChart topManager, OrgChart reportOne, OrgChart reportTwo) {
+        if (topManager == null) return null;
+        if (topManager == reportOne || topManager == reportTwo) {
+            return topManager;
+        }
+        int count = 0;
+        List<OrgChart> list = new ArrayList<>(2);
+        for (OrgChart child : topManager.directReports) {
+            OrgChart ret = getLowestCommonManager_helper(child, reportOne, reportTwo);
+            if (ret != null){
+                list.add(ret);
+            }
+            if (list.size() == 2) break;
+        }
+        if (list.size() == 2) {
+            return topManager;
+        } else if (list.size() == 1){
+            return list.remove(0);
+        } else
+            return null;
+    }
+
+        private static Deque<OrgChart> getHierarchy(OrgChart topManager, OrgChart reportee){
         Deque<OrgChart> path = new ArrayDeque<>();
         getHierarchy(topManager, reportee, path);
         return path;
@@ -50,6 +79,15 @@ class Program {
         OrgChart(char name) {
             this.name = name;
             this.directReports = new ArrayList<OrgChart>();
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder ret =  new StringBuilder();
+            ret.append(name).append("[");
+            directReports.forEach(x -> ret.append(x).append(" - "));
+            ret.append(" ]");
+            return ret.toString();
         }
 
         // This method is for testing only.

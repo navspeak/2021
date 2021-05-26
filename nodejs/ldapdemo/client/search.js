@@ -1,9 +1,5 @@
-//const fs = require('fs');
 const ldapjsclient = require('ldapjs-client');
 const config = require('./config');
-//const tls = {
-//    ca: [fs.readFileSync('/path/to/the/pem/file')]
-//}
 const nopt = require("nopt")
   , Stream = require("stream").Stream
   , path = require("path")
@@ -27,9 +23,9 @@ const nopt = require("nopt")
   , parsed = nopt(knownOpts, shortHands, process.argv, 2)
 
 parsed.url = `ldap://${parsed.host}:${parsed.port}`
-console.log(parsed);
-console.log(config)
-//search();
+//console.log(parsed);
+//console.log(config)
+search();
 
 
 //ldapsearch -x -H ldap://127.0.0.1:3004 -b "dc=test" "(&(objectclass=person)(cn=user-login))" attribute1 attribute2
@@ -47,8 +43,6 @@ async function search(){
     }
 }
 
-
-
 module.exports = search
 
 /*
@@ -59,6 +53,22 @@ node search.js \
  --password password \
  --baseDn dc=navspeak,dc=com \
  --filter objectClass=*
+
+ node search.js \
+  --host localhost \
+  --port 389 \
+  --username  cn=read-only-admin,dc=example,dc=com \
+  --password password \
+  --baseDn dc=example,dc=com \
+  --filter objectClass=inetOrgPerson
+
+ node search.js \
+  --host localhost \
+  --port 389 \
+  --username  cn=read-only-admin,dc=example,dc=com \
+  --password password \
+  --baseDn dc=example,dc=com \
+  --filter uid=boyle
 
 */
 

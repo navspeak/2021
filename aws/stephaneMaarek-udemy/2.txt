@@ -7,7 +7,9 @@ AWS CloudWatch Custom Metrics
 
 EC2 detailed moitoring:
 - EC2 metrics have every 5 min by default (basic)
-- detailes monitorinf (for cost) every 1 min . Free tier allows 10 detailed monitoring
+- detailed monitoring (for cost) every 1 min . Free tier allows 10 detailed monitoring
+- By default, basic monitoring is enabled when you use the AWS management console to create a launch configuration.
+ Detailed monitoring is enabled by default when you create a launch configuration using the AWS CLI
 - EC2 Memory usage is not pushed by default (must be pushed from inside the instance as a custom metric)
 EC2 Custom metrics: can send custom metrics using CLI to cloudwatch.
  Metric resolution: Standard 1 min. High Resolution: up to 1 sec. higher cost
@@ -15,7 +17,7 @@ EC2 Custom metrics: can send custom metrics using CLI to cloudwatch.
 Cloudwatch Dashboard:
 - Global | Can include graph from different regions
 - automatic refresh 10s, 1m...
-- 3 dashboards (up to 50 metrics free)
+- 3 dashboa (up to 50 metrics free)
 - $3/dashboard per month after that
 
 CloudWatch can collect log from:
@@ -31,23 +33,15 @@ Log Storage:
   - define expiration policies
   - AWS CLI to tail CloudWatch logs
   - To send logs to CloudWatch ensure IAM permissions.
-
+CloudWatch Log Insights - to query logs and add queries to dashboa
 CloudWatch can have a metric filter (say specific IP) to trigger alarm
 
 CloudWatch Logs Agent (old) & Unified Agent
 (metrics as well like CPU, netstat, disk IO at granular level. Swap, RAM. SSM parameter store)
-==================================
-https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/QuickStartEC2Instance.html
-- EC2 instance - attach IAM Role with policy CloudWatchLogFullAccess
-    1  sudo yum update -y
-    2  sudo systemctl start awslogsd
-    3  yum install -y awslogs
-    5  cat /etc/awslogs/awscli.conf
-    6  sudo systemctl start awslogsd
-    7  sudo systemctl enable awslogsd.service
-    8  cat /var/log/awslogs.log
-Now go to console cloudwatch log and you will see log group for this created
-
+Recover Ec2 instance:
+- CloudWatch alarm (search in cloudwatch Ec2 metric by instance id) :statusCheckFailed_System
+   - This checks Ec2 VM -> EC2 Instance recovery
+- https://www.youtube.com/watch?v=z_bUDHUEWUY - SSM + Cloudwatch
 AWS CloudWatch Alarms
 ===================
 - attached to ASG, EC2 actions, SNS notification
@@ -63,17 +57,17 @@ Recovery: Same Private, Public, Elastic IP
 
 AWS CloudWatch Events: Cron jobs or Event Pattern
 ===
-
-AWS Cloud Trail: enabled by default. = history of events
-Management Events  (by default)| Data Events (not default enabled. Lot of logs)
+Who deleted my EC2 insatnce => cloudTrail
+AWS CloudTrail: Audit. enabled by default. = history of events = 90 days stored by default => send to s3
+Management Events  (by default)| Data Events (not default enabled. Lot of logs) | CloudTrail Insights (unusual
+  activity like burst of AWS IAM action, hitting service limit etc)
+- Mgmt event - bypass KMS event
 - Choose either Mutlti region set up is one (current) or all region. No option to select particular region
 - Multi account set up require S3 bucket policy setup
 - Logginng access accross multiple accounts require IAM roles setup
 - only 5 trails
-- can be sent to s3, cloudwatcg, lambda ...
+- can be sent to s3, cloudwatch
 - use case failed logins, api auth failures, IAM changes, resource modification
-
-==
 
 AWS Config (per region but can be aggregated accross regions and accounts)
 ===
@@ -96,3 +90,4 @@ STS - temp token valid from 15 mins up to 1 hr .
 https://docs.aws.amazon.com/IAM/latest/UserGuide/tutorial_cross-account-with-roles.html
 ==
 aws SSM (Simple System Manager) parameter store
+REVISE: Why ASG does not terminate unhealthy instances: https://aws.amazon.com/premiumsupport/knowledge-center/auto-scaling-terminate-instance/
