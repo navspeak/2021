@@ -32,6 +32,15 @@ Base: remainingOpen == remainingClose == 0*/
  (())
  ()()
 
+ 2 2
+ (
+ 1 2
+ ((
+ 0 2
+ (()
+ 0 1
+ (())
+
      */
     private void generateParenthesisRec(int n, String str, int remOpen, int remClose){
         //base

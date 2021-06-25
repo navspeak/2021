@@ -4,6 +4,14 @@ import java.util.Arrays;
 
 public class _92BinarySearch {
 
+    //https://www.youtube.com/watch?v=eT0UqrYuqbg
+    /*
+        row = array.length ; col= array[0].length
+        left = 0; right = col -1; mid = right + (left -right)/2
+        mid_elem = matrix[mid/row][mid%col]
+
+     */
+
     public static void main(String[] args) {
         System.out.println(Arrays.toString(getRange(new int[]{1, 20, 30, 70, 80},-1))); //-1,0
         System.out.println(Arrays.toString(getRange(new int[]{1, 20, 30, 70, 80},1))); // 0,0

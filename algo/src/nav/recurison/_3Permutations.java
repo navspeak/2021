@@ -9,17 +9,17 @@ public class _3Permutations {
         printPermutations("abcd".toCharArray(), 0);
     }
 
+
+
+    //O(N!N.N) Space: O(N.N!)
     public static List<List<Integer>> getPermutations(List<Integer> array) {
-        List<List<Integer>> result = new ArrayList<>();
+        List<List<Integer>> result = new ArrayList<>(); //[]
         if (array.size() == 0) {
+            result.add(new ArrayList<>());//[[]]
             return result;
         }
         int curr = array.remove(0);
         List<List<Integer>> subResult = getPermutations(array);
-        if (subResult.size() == 0) {
-            result.add(new ArrayList<>(Arrays.asList(curr)));
-            return result;
-        }
         for(List<Integer> list: subResult){
             for(int i = 0; i <= list.size(); i++){
                 List<Integer> tmpList = new ArrayList<>(list);
@@ -32,6 +32,13 @@ public class _3Permutations {
     }
 
     // swap method - using string just for variation
+    /*
+         .abcd
+      a.bcd
+    ab.cd
+  abcd  acbd
+
+     */
     private static void printPermutations(char[] str, int i /*, List<String> result*/) {
         if (i == str.length-1) {
             System.out.println(str);

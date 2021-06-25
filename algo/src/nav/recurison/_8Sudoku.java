@@ -1,6 +1,7 @@
 package nav.recurison;
 
 import java.util.Arrays;
+import java.util.HashSet;
 
 public class _8Sudoku {
 
@@ -8,8 +9,28 @@ public class _8Sudoku {
     static final int COLS = 9;
     static final int GRID = 3;
     static final int[][] board = new int[ROWS][COLS];
+    public boolean isValidSudoku(char[][] board) {
+        HashSet<String> seen = new HashSet<>();
+
+
+        for(int i = 0; i < 9; i++){
+            for(int j = 0; i < 9; j++){
+                char val = board[i][j];
+                if (Character.isDigit(val)){
+                    boolean seenInRow = !seen.add(val+" found at row "+ i); // ADD returns false if already present
+                    boolean seenInCol = !seen.add(val+" found at col "+ j);
+                    boolean seenInbox = !seen.add(val+" found at box ["+ i/3 + "," + j/3 + "]");
+                    if (seenInRow || seenInCol || seenInbox) return false;
+                }
+            }
+
+        }
+        return true;
+    }
     // NP complete - O(9^(empty space))
     public static void main(String[] args) {
+        char x = Character.forDigit(9 , 10);
+        System.out.println(x == '9');
         int[][] board =  new int[][] {
                 {7, 8, 0, 4, 0, 0, 1, 2, 0},
                 {6, 0, 0, 0, 7, 5, 0, 0, 9},
@@ -51,22 +72,36 @@ public class _8Sudoku {
     }
 
     static boolean placementValid(int[][] board, int num, int row, int col){
-        // row check
-        for(int j = 0; j < 9; j++){
-            if (board[row][j] == num) return false;
-        }
-        // col check
-        for(int i = 0; i < 9; i++){
+        for(int i = 0; i<9; i++){
+            if (board[row][i] == num) return false;
             if (board[i][col] == num) return false;
+            if(board[3 * (row/3) + i/3][3 * (col/3) + i%3] == num) return false;
         }
-        // grid check
-        int rowOffset = row / 3;
-        int colOffset = col / 3;
-        for (int i = rowOffset*3; i < rowOffset*3 + 3; i++){
-            for (int j = colOffset*3; j < colOffset*3 + 3; j++) {
-                if (board[i][j] == num) return false;
-            }
-        }
+
+        /*
+                           i=0,1,2,3,4,5,6,7,8,9
+             00  01  02     (0+0/3,0+0%3)  (0+1/3, 0+1%3) ...
+             10  11  12
+             20  21  22
+
+         */
+
+//        // row check
+//        for(int j = 0; j < 9; j++){
+//            if (board[row][j] == num) return false;
+//        }
+//        // col check
+//        for(int i = 0; i < 9; i++){
+//            if (board[i][col] == num) return false;
+//        }
+//        // grid check
+//        int rowOffset = row / 3;
+//        int colOffset = col / 3;
+//        for (int i = rowOffset*3; i < rowOffset*3 + 3; i++){
+//            for (int j = colOffset*3; j < colOffset*3 + 3; j++) {
+//                if (board[i][j] == num) return false;
+//            }
+//        }
         return true;
     }
 

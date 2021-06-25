@@ -6,6 +6,10 @@ const io = require('socket.io')(server);
 const btcRoute = require('./routes/btcRoute');
 const port = 8080;
 app.set('view engine', 'ejs');
+
+app.get('/test', (req, res, next) => {
+    res.json({"test": "val"})
+});
 app.use(express.static(path.join(__dirname, "public")));
 app.use('/btc', btcRoute);
 io.on('connection', function(socket) {

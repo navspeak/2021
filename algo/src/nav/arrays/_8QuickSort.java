@@ -1,6 +1,8 @@
 package nav.arrays;
 
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.PriorityQueue;
 import java.util.Random;
 
 import static nav.arrays._6Sorting.swap;
@@ -12,7 +14,8 @@ public class _8QuickSort {
         sort(array, 0, array.length -1);
         System.out.println(Arrays.toString(array));
         array = new int[]{10,15,8,7,1,2,6};
-        System.out.println(findKthMin(array, 0, array.length - 1,5));
+        System.out.println(findKthMin(array, 0, array.length - 1,3));
+        System.out.println(findKthMin_Heap(array, 3));
 
     }
 
@@ -29,6 +32,20 @@ public class _8QuickSort {
 
     }
 
+    public static int findKthMin_Heap(int arr[], int k){
+        PriorityQueue<Integer> maxHeap= new PriorityQueue<>(Comparator.reverseOrder());
+        for(int e: arr){
+            if (maxHeap.size() < k){
+                maxHeap.add(e);
+            } else if (e < maxHeap.peek()){
+                maxHeap.remove();
+                maxHeap.add(e);
+            }
+
+        }
+        return maxHeap.peek();
+    }
+
     // best case: pivot divides in middle - O(nlogn) | worst: every time pivot is at end of the array
     public static void sort(int[] array, int left, int right){
         if (left >= right) return;
@@ -39,6 +56,7 @@ public class _8QuickSort {
 
     public static int partition(int[] array, int left, int right){
         int randomIdx = (left + (new Random()).nextInt(right - left));
+
         swap(array, left, randomIdx);
         // 10 5 6 7 8 [9]
         int pivotIdx = right;

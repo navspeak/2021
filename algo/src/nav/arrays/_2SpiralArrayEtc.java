@@ -15,7 +15,6 @@ public class _2SpiralArrayEtc {
         final int rowEnd_outer = arr.length - 1;
         final int colStart_outer=  0;
         final int colEnd_outer = arr[0].length - 1;
-        List<int[]> boundaries = new ArrayList<>();
 
         final int elements = arr[0].length * arr.length;
         int elementsAddedsoFar = 0;
@@ -31,7 +30,7 @@ public class _2SpiralArrayEtc {
                 result.add(arr[rowStart][i]);
                 elementsAddedsoFar++;
             }
-            if (elementsAddedsoFar >= elements) break;
+            if (elementsAddedsoFar == elements) break;
 
             // add elements \/
             // col fixed at colEnd; row -> [rowStart+1...rowEnd]
@@ -39,7 +38,7 @@ public class _2SpiralArrayEtc {
                 result.add(arr[i][colEnd]);
                 elementsAddedsoFar++;
             }
-            if (elementsAddedsoFar >= elements) break;
+            if (elementsAddedsoFar == elements) break;
 
             // add elements <---
             // row fixed at rowEnd ; col -> [colEnd-1,...loop]
@@ -47,7 +46,7 @@ public class _2SpiralArrayEtc {
                 result.add(arr[rowEnd][i]);
                 elementsAddedsoFar++;
             }
-            if (elementsAddedsoFar >= elements) break;
+            //if (elementsAddedsoFar >= elements) break;
 
             // add elements /\
             // col fixed at loop ; row -> [rowEnd-1,...loop]
@@ -55,7 +54,7 @@ public class _2SpiralArrayEtc {
                 result.add(arr[i][loop]);
                 elementsAddedsoFar++;
             }
-            if (elementsAddedsoFar >= elements) break;
+            //if (elementsAddedsoFar >= elements) break;
             loop++;
         }
         return result;
@@ -155,10 +154,11 @@ public class _2SpiralArrayEtc {
 //        System.out.println(longestPeak(new int[]{1,3,2}));
 //        arr = new int[][]{};
 //        System.out.println(Arrays.toString(traverseSpirally(arr).toArray()));
-//        arr = new int[][]{{1}};
-//        System.out.println(Arrays.toString(traverseSpirally(arr).toArray()));
+        arr = new int[][]{{1,2,3,4,5},{ 6,7,8,9,10},{ 11,12,13,14,15},{ 16,17,18,19,20},{ 21,22,23,24,25}};
+
+        System.out.println(Arrays.toString(traverseSpirally(arr).toArray()));
         System.out.println(Arrays.deepToString(arr));
-        Arrays.sort(arr,(a, b) ->Integer.compare(a[0], b[0]) );
+        //Arrays.sort(arr,(a, b) ->Integer.compare(a[0], b[0]) );
 
 
 

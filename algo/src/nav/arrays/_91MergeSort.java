@@ -13,7 +13,7 @@ public class _91MergeSort {
         int[] left = Arrays.copyOfRange( arr,0, arr.length/2);
         int[] right = Arrays.copyOfRange( arr, arr.length/2, arr.length);
         mergeSort(arr, 0, arr.length -1, auxArr);
-//        System.out.println(Arrays.toString(arr));
+       System.out.println(Arrays.toString(arr));
 //        System.out.println(Arrays.toString(left));
 //        System.out.println(Arrays.toString(right));
         int[] arr1 = { 2, 3, 3, 1, 9, 5, 6};
@@ -40,32 +40,8 @@ public class _91MergeSort {
         }
         System.arraycopy(arr,i,aux, k,end1 -i + 1);
         System.arraycopy(arr,j,aux, k,end2 -j + 1);
+        System.arraycopy(aux,start1, arr, start1, end2-start2+1 + end1-start1+1);
     }
-
-//
-//    public static void mergeSort (int[] arr){
-//        if (arr.length == 1) return;
-//        int[] left = Arrays.copyOfRange( arr,0, arr.length/2);
-//        int[] right = Arrays.copyOfRange( arr, arr.length/2, arr.length);
-//        mergeSort(left);
-//        mergeSort(right);
-//        merge(left, right, arr);
-//
-//    }
-//
-//    private static void merge(int[] left, int[] right, int[] arr) {
-//        int i=0, j=0, k=0;
-//        while(i<left.length && j< right.length){
-//            if (left[i] < right[j]) {
-//                arr[k++] = left[i++];
-//            } else {
-//                arr[k++] = right[j++];
-//            }
-//        }
-//
-//        System.arraycopy(left, i, arr, k, left.length - i);
-//        System.arraycopy(right, j, arr, k, right.length - j);
-//    }
 
     public int countInversions(int[] array){
         if (array.length <= 1) return 0;

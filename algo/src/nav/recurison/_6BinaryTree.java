@@ -24,7 +24,7 @@ public class _6BinaryTree {
     F(2) = F(0)F(1) + F(1)(0) =2
     F(n) = F(0)F(n-1)+F(1)F(n-2)+....+F(n-1)F(0) */
     //O(n^2)
-    public int numTrees(int n) {
+    public int numTrees_dp(int n) {
         if (n <= 1) return 1;
         int [] F = new int[n+1];
         F[0] = F[1] = 1;
@@ -37,6 +37,34 @@ public class _6BinaryTree {
             F[i] = result;
         }
         return F[n];
+    }
+
+       /*
+        n= 0 => 1
+        n= 1 => 1
+        n= 2 => f(0)f(1)+f(1)f(0) = 2
+        n= 3 => f(0)f(2)+f(1)f(1)+f(2)f(0) = 5
+        n= 4 => f(0)f(3)+f(1)f(2)+f(2)f(2)+f(3)f(0)= 14
+        With memo => o(n^2) time complexity otherwise factorial (catalan formula is upper bound)
+
+    */
+
+    public int numTrees(int n) {
+        int[] memo = new int[n+1];
+        memo[0] = memo[1] = 1;
+        return numTrees(n, memo);
+    }
+
+    private int numTrees(int n, int[] memo){
+        if (memo[n] > 0) return memo[n];
+        if (n <= 1 ) return 1;
+        int count = 0;
+        for (int left=0; left<n; left++){
+            int right = n - left - 1;
+            count+=numTrees(left, memo)*numTrees(right, memo);
+        }
+        memo[n] = count;
+        return count;
     }
 
     public static void main(String[] args) {

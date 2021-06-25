@@ -19,7 +19,7 @@ public class _9HeapSort {
 
     public static void heapSort(int[] arr, int end){
         if (end == 0) return;
-        heapify(arr, end);
+        heapify(arr, end); // bring largest to 0th index, swap with last index, repeat for end = end - 1
         swap(arr, end, 0);
         heapSort(arr, end -1);
     }
@@ -35,7 +35,8 @@ public class _9HeapSort {
   [3-8]
 
      */
-     public static void heapify(int[] array, int end){
+    // bring largest to 0th index
+     public static void heapify(int[] array, int end){ // end is the last leaf index
          if (end <= 0) return;
          int parentIdx = (end - 1)/2;
          int leftChildIdx = 2*parentIdx + 1;

@@ -8,24 +8,26 @@ import java.util.stream.Collectors;
 
 public class _4Subset {
     public static void main(String[] args) {
-        List<List<String>> orig = new ArrayList<>();
-        orig.add(new ArrayList<>(Arrays.asList("Apple", "Orange")));
-        orig.add(new ArrayList<>(Arrays.asList("Lion", "Tiger")));
-        System.out.println(Arrays.deepToString(orig.toArray())); // [[Apple, Orange], [Lion, Tiger]]
-        List<List<String>> dup = new ArrayList<>(); //
-        dup.addAll(orig);//dup will be new but whatever is inside it are a pointer to original
-        for(List<String> s: orig){
-            s.add("X");
-            dup.add(s);
-            s.remove(s.size() - 1);
-        }
-        System.out.println(Arrays.deepToString(orig.toArray()));//[[Apple, Orange, X], [Lion, Tiger, X]]
-        System.out.println(Arrays.deepToString(dup.toArray()));//[[Apple, Orange, X], [Lion, Tiger, X], [Apple, Orange, X], [Lion, Tiger, X]]
-        System.out.println(Arrays.deepToString(subsets(new int[]{1,2,3}, 0).toArray()));
-        System.out.println(Arrays.deepToString(subsets(new int[]{1,2,3}).toArray()));
+//        List<List<String>> orig = new ArrayList<>();
+//        orig.add(new ArrayList<>(Arrays.asList("Apple", "Orange")));
+//        orig.add(new ArrayList<>(Arrays.asList("Lion", "Tiger")));
+//        System.out.println(Arrays.deepToString(orig.toArray())); // [[Apple, Orange], [Lion, Tiger]]
+//        List<List<String>> dup = new ArrayList<>(); //
+//        dup.addAll(orig);//dup will be new but whatever is inside it are a pointer to original
+//        for(List<String> s: orig){
+//            s.add("X");
+//            dup.add(s);
+//            s.remove(s.size() - 1);
+//        }
+//        System.out.println(Arrays.deepToString(orig.toArray()));//[[Apple, Orange, X], [Lion, Tiger, X]]
+//        System.out.println(Arrays.deepToString(dup.toArray()));//[[Apple, Orange, X], [Lion, Tiger, X], [Apple, Orange, X], [Lion, Tiger, X]]
+//        System.out.println(Arrays.deepToString(subsets(new int[]{1,2,3}, 0).toArray()));
+//        System.out.println(Arrays.deepToString(subsets(new int[]{1,2,3}).toArray()));
+        System.out.println(Arrays.deepToString(subsets(new int[]{4,4,4,1,4}).toArray())); //     Arrays.sort(nums); // important for subset with duplicate
     }
 
     public static List<List<Integer>> subsets(int[] nums, int i){
+
         if (i == nums.length ) {
             List<List<Integer>> ret = new ArrayList<>();
             ret.add(new ArrayList<>());
@@ -38,8 +40,6 @@ public class _4Subset {
             tmp.add(nums[i]);
             result.add(tmp);
         }
-        String one = "one";
-        String two = "two";
         return result;
     }
 

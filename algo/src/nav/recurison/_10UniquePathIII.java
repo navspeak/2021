@@ -1,9 +1,9 @@
 package nav.recurison;
 // https://leetcode.com/problems/unique-paths-iii/
 // each path must traverse all empty paths
-public class _10Maze {
+public class _10UniquePathIII {
     public static void main(String[] args) {
-        _10Maze obj = new _10Maze();
+        _10UniquePathIII obj = new _10UniquePathIII();
         int[][] grid = {{1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 2, -1}};
         int ways = obj.uniquePathsIII(grid);
         System.out.println(ways);

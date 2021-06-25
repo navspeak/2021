@@ -6,11 +6,51 @@ import lombok.ToString;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @ToString
 public class Main {
 
     public static void main(String[] args) {
+
+//        Queue<Integer> q = new LinkedList<>();
+//        q.poll(); // null if empty, remove exception;
+//        q.add(8);
+        int[] emptyArray = new int[10];
+        Arrays.fill(emptyArray, 1);
+        IntStream.of(emptyArray).boxed().collect(Collectors.toList());
+        IntStream.of(emptyArray).sum();
+        int[][] twoD = new int[5][];
+        // Array to List
+        Integer[] arr = new Integer[]{1,2,3}; // if you had int[] instead it won't work
+        List<Integer> ints = Arrays.asList(arr);
+
+        int p = 5, q = 9;
+        for (int i = 0; i < 10; i++)
+            System.out.println(p + new Random().nextInt(q-p));
+
+        Integer[] a1 = {1,2,3};
+        List<Integer> l1 = Arrays.stream(a1).collect(Collectors.toList()); // again int[] to List<Integer> won't work
+        l1 = List.of(a1); // better
+        int[] a_1 = {1,2,3};
+        l1 = IntStream.of(a_1).boxed().collect(Collectors.toList());
+
+        //1 create a List from an Array and sort it.
+        List<Integer> listFromIntArray = Arrays.stream(new int[]{1,2,3}).boxed().collect(Collectors.toList());
+        /*or */ listFromIntArray = IntStream.of(1,2,3,4).boxed().collect(Collectors.toList());
+        listFromIntArray.sort(Comparator.naturalOrder());
+
+        // 2. Set to List
+        Set<List<Integer>> set = new HashSet<>();
+
+        set.add(Arrays.asList(1,2,3));
+        List<List<Integer>> listOfList = List.copyOf(set);
+
+        List<Integer> triplets = Arrays.asList(10,2,3);
+        triplets.sort(Comparator.naturalOrder());
+        int[][] _2darr = { {1,2}, {6,8},{3,1}};
+        Arrays.sort(_2darr, (x,y) -> Integer.compare(x[0],y[0])); //  return (x < y) ? -1 : ((x == y) ? 0 : 1);
+
         //ListOp();
         //LinkedList();
         //dequeOp();

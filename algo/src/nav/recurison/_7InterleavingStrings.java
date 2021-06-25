@@ -1,6 +1,10 @@
 package nav.recurison;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class _7InterleavingStrings {
+    private static Map<String, Boolean> map = new HashMap<>();
     public static boolean interweavingStrings_WillNotWork(String one, String two, String three) {
         // ("aacaaaa", "aaabaaa", "aaaaaacbaaaaaa")
         int onelength = one == null ? 0: one.length();
@@ -27,8 +31,11 @@ public class _7InterleavingStrings {
         return interweavingStrings_helper(one, two,  three);
     }
 
+    // without memo - Time O(2^(m+n) | Space O(m+n). With Memo: Time O(mn) |O(mn)
     public static boolean interweavingStrings_helper(String one, String two, String three) {
-        String key = one+"-"+two;
+
+        String key = one+"-"+two+"-"+three;
+        //if (map.containsKey(key)) return map.get(key);
         System.out.println("F("+key+")");
         if (one.isEmpty()) {
             return two.equals(three);
@@ -39,13 +46,20 @@ public class _7InterleavingStrings {
 
         boolean o1 = false, o2=false;
         if (three.charAt(0) == one.charAt(0)) {
-           o1 = interweavingStrings_helper(one.substring(1), two,   three.substring(1) );
+           if (interweavingStrings_helper(one.substring(1), two,   three.substring(1) ) == true) {
+               map.put(key, true);
+               return true;
+           }
         }
-        if (o1 == true ) return true;
+
         if (three.charAt(0) == two.charAt(0)){
-            o2 = interweavingStrings_helper(one, two.substring(1),  three.substring(1));
+            if (interweavingStrings_helper(one, two.substring(1),  three.substring(1) ) == true){
+                map.put(key, true);
+                return true;
+            }
         }
-        return o2;
+        map.put(key, false);
+        return false;
     }
 
     private static boolean checkRelativeOrder(String one, String two){
@@ -66,7 +80,10 @@ public class _7InterleavingStrings {
     }
 
     public static void main(String[] args) {
-//        System.out.println(checkRelativeOrder("aabcc", "aadbbbaccc"));
+        String x = "a".substring(1);
+        System.out.println(x == null); // x will bempty not null
+        System.out.println(x.isEmpty());
+        System.out.println(checkRelativeOrder("aabcc", "aadbbbaccc"));
 //        System.out.println(checkRelativeOrder("dbbca", "aadbbbaccc"));
         //System.out.println(interweavingStrings("algoexpert", "your-dream-job", "your-algodream-expertjob"));
         System.out.println(interweavingStrings("aaa", "aaaf", "aaafaaa"));

@@ -2,8 +2,63 @@ package nav.arrays;
 
 import java.util.*;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 public class _3FourSum {
+
+    public static void main(String[] args) {
+        //List<Integer[]> res = fourNumberSum_(new int[]{7,6,4,-1,1,2}, 16);
+        //List<Integer[]> res = fourNumberSum(new int[]{1,0,-1,0,-2,2}, 0);
+        //List<List<Integer>> res = fourNumberSum(new int[]{2,2,2,2,2}, 8);
+        System.out.println(Arrays.deepToString(threeSum(new int[]{-1,0,1,2,-1,-4}).toArray()));
+        List<List<Integer>> res = fourNumberSum(new int[]{-5,5,4,-3,0,0,4,-2}, 4);
+        res.forEach(list -> System.out.println(Arrays.toString(list.toArray())));
+
+    }
+
+
+    public static List<List<Integer>> threeSum(int[] nums) {
+
+        // On leetcode this ran slower
+        // set.contains() can run O(n) in worst case
+//         if (nums == null || nums.length < 3  )
+//             return new ArrayList<>();
+
+//         Set<Integer> set = new HashSet();
+//         Set<List<Integer>> result = new HashSet<>();
+
+//         for(int i = 0; i < nums.length; i++){
+//             set.add(nums[i]);
+//             for (int j = i + 2; j<nums.length; j++){
+//                 int a = nums[i+1];
+//                 int b = nums[j];
+//                 if (set.contains(-(a+b))){
+//                     List<Integer> triplets = Arrays.asList(a,b,-(a+b));
+//                     triplets.sort(Comparator.naturalOrder());
+//                     result.add(triplets);
+//                 }
+//             }
+//         }
+//         return List.copyOf(result);
+
+        Arrays.sort(nums); // On leetcode it is faster
+        Set<List<Integer>> result = new HashSet<>();
+        for (int i = 0; i < nums.length; i++){
+            int remSum = -1*nums[i];
+            int p = i+1, q= nums.length -1;
+            while(p < q){
+                if (nums[p]+nums[q] == remSum){
+                    result.add(Arrays.asList(nums[i], nums[p], nums[q]));
+                    p++; q--;
+                } else if (nums[p]+nums[q] < remSum){
+                    p++;
+                } else {
+                    q--;
+                }
+            }
+        }
+        return List.copyOf(result);
+    }
     /*
     {
   "array": [7, 6, 4, -1, 1, 2],
@@ -11,7 +66,7 @@ public class _3FourSum {
   7, 6, (4), -1, 1, 2
 
   13->[7,6]
-  4+-1 = 3 => 16-3 => 13 => map.containsKey(16) => yes => 7,6,4,-1
+  4+-1 = 3 => 16-3 => 13 => map.containsKey(13) => yes => 7,6,4,-1
  4+1=5 => 16-4 = 11 => map.containsKey(11) => no
  ==
    7, 6, 4, (-1), 1, 2
@@ -36,20 +91,31 @@ public class _3FourSum {
       13 -> 7,6
 
      */
-    public static List<Integer[]> fourNumberSum(int[] array, int targetSum) {
-        Map<Integer, List<int[]>> map = new HashMap<>();
-        List<Integer[]> result = new ArrayList<>();
+    // Avg Time complexity O(n^2)
+    // Worst say input array is [4,1,-1,4,3,-3] & target = 0,the second loop will have n pairs so in that case Time complexity = O(n^3)
+    public static List<List<Integer>> fourNumberSum(int[] array, int targetSum) {
+        Map<Integer, Set<int[]>> map = new HashMap<>();
+        Set<List<Integer>> result = new HashSet<>();
         for(int i = 1; i < array.length; i++){
-            for(int j = i - 1; j >=0; j--){
+            for(int j = 0; j<i; j++){
                 final int a = array[j];
                 final int b = array[i];
-                map.compute(a+b, (k,v) -> {
+
+//                List<int[]> v = new ArrayList<>();
+//                if (map.containsKey(a+b)){
+//                    v = map.get(a+b);
+//                }
+//                v.add(new int[]{a,b});
+//                map.put(a+b, v);
+
+                map.compute(a+b, (k,v) -> { //same thing as above
                     if (v == null) {
-                        v = new ArrayList<>();
+                        v = new HashSet<>();
                     }
                     v.add(new int[]{a,b});
                     return v;
                 });
+
             }
 
             for(int j = i + 2; j < array.length; j++){
@@ -57,14 +123,20 @@ public class _3FourSum {
                 final int b = array[j];
                 int remSum = targetSum - a - b;
                 if (map.containsKey(remSum)){
-                    map.get(remSum).forEach( ints -> result.add(new Integer[]{ints[0], ints[1], a, b}));
+
+                    map.get(remSum).forEach( ints -> {
+                        List<Integer> quadruples = Arrays.asList(ints[0], ints[1], a, b);
+                        quadruples.sort(Comparator.naturalOrder());
+                        result.add(quadruples);
+                    });
                 }
             }
         }
 
-        return result;
+        return List.copyOf(result);
     }
 
+    // Not optimal
     public static List<Integer[]> fourNumberSum_(int[] array, int targetSum) {
         List<Integer[]> result = new LinkedList<>();
         Arrays.sort(array);
@@ -97,7 +169,9 @@ public class _3FourSum {
         return result;
     }
 
-    // TIME: O(NlogN) + O(N^3)
+
+
+    // TIME: O(NlogN) + O(N^2)
     // SPACE: O(N)
 }
 /*
