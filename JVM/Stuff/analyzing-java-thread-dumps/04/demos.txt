@@ -1,0 +1,47 @@
+## Steps for deploying the Docker image and containers used in Module 4 and 6 ##
+## The Docker image comes with "strace" preinstalled                          ##
+================================================================================
+
+##                                      Start Here 			      ##
+================================================================================
+
+1. First, install Docker on your machine. Use google to search for "install docker <OS>", and follow the installation instructions for your operating system. 
+
+2. With docker installed, pull our course demo Docker image using the following command:
+
+docker pull uriahl-docker-registry.bintray.io/ajtd/ajtd-ubuntu:1.0
+
+This image will be used for the demos of modules 4 and 6.
+
+##                                      Module 4 			      ##
+================================================================================
+
+1. Run the container using the following command:
+
+# For reads limited to a 150Kb per-second:
+
+docker run -d --cap-add SYS_PTRACE --security-opt seccomp:unconfined --name slow-reader -it --device-read-bps /dev/sda:150kb uriahl-docker-registry.bintray.io/ajtd/ajtd-ubuntu:1.0
+
+# For writes limited to a 150Kb per-second:
+
+docker run -d --cap-add SYS_PTRACE --security-opt seccomp:unconfined --name slow-writer -it --device-write-bps /dev/sda:150kb uriahl-docker-registry.bintray.io/ajtd/ajtd-ubuntu:1.0
+
+2. Get shell access into the container:
+
+docker exec -it slow-reader /bin/bash
+
+OR
+
+docker exec -it slow-writer /bin/bash
+
+##                                      Module 6			      ##
+================================================================================
+
+1. Run the container using the following command:
+
+docker run -d --cap-add SYS_PTRACE --security-opt seccomp:unconfined --name ajtd-m6 -it ajtd-ubuntu:1.0
+
+2. Get shell access into the container:
+
+docker exec -it ajtd-m6 /bin/bash
+

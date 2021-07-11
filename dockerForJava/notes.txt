@@ -1,0 +1,161 @@
+1. https://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-basics.html
+2. docker ps | docker stop cd45
+3. docker rmi $(docker images -q) -f // docker images -a
+4. docker run -p 27017:27017 -v /home/ec2-user/dockerdata/mongo:/data/db -d mongo //-p HOST:CONTAINER
+5. sudo service docker start
+6. docker run --name nav-mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -v /home/ec2-user/tmp/:/var/lib/mysql -p 3306:3306 -d mysql
+7. docker logs -f <hash/name>
+=====================
+Preparing Centos image
+=====================
+docker run -d centos // has no CMD, so docker ps will show nothing
+So,
+docker run -d centos tail -f /dev/null // now docker ps will
+docker exec -it <name of container> bash
+  - yum install java
+===
+Dockerfile
+===
+	FROM amazonlinux:2
+	RUN yum install -y java-11-amazon-corretto
+
+	VOLUME /tmp
+	ADD /login-0.0.1-SNAPSHOT.jar myapp.jar
+	#update timestamp
+	RUN sh -c 'touch /myapp.jar'
+	# https://gandharvkapoor.wordpress.com/2017/02/23/spring-boot-slow-boot-up-random-vs-urandom/
+	ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar","/myapp.jar"]
+=====
+* copy login-0.0.1-SNAPSHOT.jar & Dockerfile in say /home/ec2-user/
+* docker build -t spring-boot-docker .
+---
+		Complete!
+		Removing intermediate container 4b7de87937d6
+		 ---> b784c0af6de2
+		Step 3/6 : VOLUME /tmp
+		 ---> Running in 15ae9f3eb1ca
+		Removing intermediate container 15ae9f3eb1ca
+		 ---> 659ef5d89077
+		Step 4/6 : ADD /login-0.0.1-SNAPSHOT.jar myapp.jar
+		 ---> e847dea30028
+		Step 5/6 : RUN sh -c 'touch /myapp.jar'
+		 ---> Running in 22ccfb3ec53a
+		Removing intermediate container 22ccfb3ec53a
+		 ---> 0210b586bb35
+		Step 6/6 : ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar","/myapp.jar"]
+		 ---> Running in 3851005af574
+		Removing intermediate container 3851005af574
+		 ---> d24c8e8917db
+		Successfully built d24c8e8917db
+		Successfully tagged spring-boot-docker:latest
+		[root@ip-172-31-50-12 ec2-user]#
+---
+* docker run -d -p 80:8080 spring-boot-docker //HOST:CONTAINER
+docker container rm 8a
+8a
+http://ec2-54-82-172-203.compute-1.amazonaws.com/ - hit this and your page will be up
+[root@ip-172-31-50-12 ec2-user]# docker rmi spring-boot-docker
+Untagged: spring-boot-docker:latest
+Deleted: sha256:d24c8e8917db24fa10e6c41ae4b04c5376d96c84765cc67070dac192e5f435b5
+Deleted: sha256:0210b586bb3540c813f264a8e1d0b837447e7f6db7c85626bfdf06b11481e3dc
+Deleted: sha256:edeccc57d70e9accef022612ebce1105202e7129ecede2b223c4d9d0a55b50de
+Deleted: sha256:e847dea3002843445f54765b59bb23beb6a20a156ebf1f40589a3a893607052a
+Deleted: sha256:6f95e0ebacf4dfbd4aeed88c250cb5b1b75d97bce1411dfcc6696b42a8e33c51
+Deleted: sha256:659ef5d89077e256b7eb89e96a561439b4100a880eda7e5f6ba79441d4b152b7
+Deleted: sha256:b784c0af6de229a46fef88951db0dd25e67132d70fb440bc2f04a4c6ddd7fb18
+Deleted: sha256:e63ac11c0167146efa240472d4a968ed060
+-------
+Containers cleanup:
+--------
+Kill all running containers: docker kill $(docker ps -q)
+Delete all stopped Docker Containers : docker rm $(docker ps -a -q)
+-------
+Images cleanup:
+--------
+Remove all untagged imagess: docker rmi $(docker images -q -f danglin-true)
+Delete all images : docker rmi $(docker images -q)
+-------
+Vol cleanup
+--------
+docker voumes rm $(docker volumes ls -f dangling=true -q) // dangling means no associated containers
+
+https://springframework.guru/docker-cheat-sheet-for-spring-devlopers/
+---
+[ec2-user@ip-172-31-50-12 ~]$ docker images -a
+REPOSITORY    TAG       IMAGE ID       CREATED        SIZE
+hello-world   latest    d1165f221234   4 months ago   13.3kB
+---
+[ec2-user@ip-172-31-50-12 ~]$ docker images -q
+d1165f221234
+---
+Standing up Mongo:
+----
+docker run mongo // ctr - c => goes away
+[ec2-user@ip-172-31-50-12 ~]$ docker run -d mongo 
+765d181d2a4ee325f5baf2266b9941fef2d880954e8a48fb7a848ea2d0c433fe
+[ec2-user@ip-172-31-50-12 ~]$ docker stop 765d
+765d
+[ec2-user@ip-172-31-50-12 ~]$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+[ec2-user@ip-172-31-50-12 ~]$
+
+---
+[ec2-user@ip-172-31-50-12 ~]$ docker run -p 27017:27017 -d mongo
+ccb9f3506e88a22667c3d3fccfdae895802bdcb8abe034d4b8d13ad819b18be4
+[ec2-user@ip-172-31-50-12 ~]$ docker ps
+CONTAINER ID   IMAGE     COMMAND                  CREATED         STATUS         PORTS                      NAMES
+ccb9f3506e88   mongo     "docker-entrypoint.s…"   6 seconds ago   Up 5 seconds   0.0.0.0:27017->27017/tcp   funny_bardeen
+docker logs -f ccb // -f follow
+---
+D:\ideaIC2020.1.4\ideaIC-2020.1.4.win\plugins\maven\lib\maven3\bin\mvn clean package spring-boot:repackage
+D:\ideaIC2020.1.4\ideaIC-2020.1.4.win\plugins\maven\lib\maven3\bin\mvn  spring-boot:run
+---
+layer has 256 hash, imageId also 256 hash (1st 12 characters)
+docker image inspect mongo
+"RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:8f8f0266f8349dd17fdca5a1c827a7c8b11d84903b1226b05c6fbdc7edd30652",
+                "sha256:06a57092bf98d8f92e88f0853c84fa482ec0b20bb808b39acb1ede3a1467f07c",
+                "...
+            ]
+        }
+----
+tag name => [registryhost/][username/]name[:tag] => registry.hub.docker.com/mongo:latest
+---
+You can extend a docker image to make an image for yourself
+https://github.com/navspeak/docker
+- layers of base images are shared
+- e.g if u had a linux image that was used in mongo. When you pull mongo, that linux will not be pulled again if it was already pulled down earlier
+- layers are immutable (except last where it may write)
+-Only the instructions RUN, COPY, ADD create layers. Other instructions create temporary intermediate images, and do not increase the size of the build.
+- DockerFile: https://github.com/docker-library/mongo/blob/0d202a460147166053e92744994ad9f5698ff337/5.0-rc/Dockerfile
+FROM scratch 
+ADD ubuntu-bionic-oci-amd64-root.tar.gz /
+CMD ["bash"]
+---
+I see when I stop and start the container. Data is NOT lost. Will be lost if we removed the container (docker container rm)
+- Non Peristent Container Storage
+---
+Assigning storage
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+[ec2-user@ip-172-31-50-12 ~]$ docker run -p 27017:27017 -v /home/ec2-user/dockerdata/mongo:/data/db -d mongo
+41b6931e9d48859cb149c84f83024100c6d0eff8fb86b8f3cbb3e243ce96b79c
+[ec2-user@ip-172-31-50-12 ~]$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+[ec2-user@ip-172-31-50-12 ~]$ docker logs 41b (to see any errors if container didnt come up)
+---
+JpaRepository extends PagingAndSortingRepository which in turn extends CrudRepository.
+
+Their main functions are:
+
+CrudRepository mainly provides CRUD functions.
+PagingAndSortingRepository provides methods to do pagination and sorting records.
+JpaRepository provides some JPA-related methods such as flushing the persistence context and deleting records in a batch.
+Because of the inheritance mentioned above, JpaRepository will have all the functions of CrudRepository and PagingAndSortingRepository. So if you don't need the repository to have the functions provided by JpaRepository and PagingAndSortingRepository , use CrudRepository.
+
+---
+@SpringBootApplication
+-------> @SpringBootConfiguration
+       -------> @Configuration
+https://github.com/springframeworkguru/springbootwebapp/tree/part6

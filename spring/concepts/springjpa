@@ -1,0 +1,92 @@
+One to One:
+===========
+@Entity
+public class Passport {
+   //Inverse relationship
+   // bi drectional
+   // if you remove mappedBy, then this table will have a student_id
+   // inverse side is normally lazy
+   @OeToOne(fetch = FetchType.LAZY, mappedBy = "passport")
+   private Student student;
+}
+
+@Entity
+public class Student { // student table will have a Passport_Id column (owner)
+   @OeToOne
+   private Passport pp;
+}
+
+One to Many:
+===========
+@Entity
+public class Project {
+   @JsonManagedReference
+   @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch=FetchType.LAZY)
+   private List<Task> tasks;
+}
+
+@Entity
+public class Task {
+   @JsonBackReference
+   @ManyToOne
+   @JoinColumn(name = "PROJECT_ID")
+   private Project proj;
+}
+
+Many to Many Relationship
+=========
+@Entity
+public class Project {
+   @ManyToMany
+   //@JoinTable(name="STU_PROJ")
+   //inverseJoinColumn=@JoinColumn(name="PROJECT_ID"))
+   private List<Student> students;
+}
+
+@Entity
+public class Student {
+   @OneToMany(mappedBy = "student")
+   private List<Project> projects;
+}
+
+DataSource
+====
+db.driver=org.hsqldb.jdbcDriver
+db.url=jdbc:hsqldb:mem:firstdb
+db.username=sa
+dn.password=
+
+https://www.baeldung.com/spring-persistence-jpa-jndi-datasource
+    //USING JNDI
+    @Bean
+    public DataSource dataSource() throws NamingException {
+        return (DataSource) new JndiTemplate().lookup(env.getProperty("jdbc.url"));
+    }
+
+Entity Manager Factory & Transaction Manager
+=====
+@Transactional
+https://www.baeldung.com/hibernate-entitymanager
+
+@PeristenceContext
+private EntityManager em;
+public Passport getPassport(final long id) {
+    Passport pp = em.find(Passport.class, id);
+    return pp;
+}
+
+https://github.com/springframeworkguru/spring-core-spring-mvc/blob/spring-data-jpa-code-assignment/src/main/java/guru/springframework/services/jpaservices/UserServiceJpaDaoImpl.java
+
+Spring DATA JPA:
+===
+wrapper for JPA
+Replaces our Repository Tier (using Repository interface)
+Extendable
+Removes a lot of boiler plate code using em.persist(Test) with vanilla Spring JPA
+CrudRepository
+jpaRepository
+PagingAndSortingRepository
+
+JPQL != SQL (Object vs Table)
+===
+Query q = em.createQuery("Select r from Registration"); // here Registratrion refers to Object not DB table
