@@ -1,0 +1,4 @@
+Maven vs Gradler and Fabric8
+----------------------------
+https://github.com/springframeworkguru/spring-boot-docker
+https://www.baeldung.com/spring-boot-console-app
