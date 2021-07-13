@@ -1,0 +1,26 @@
+-jdbcTemplate
+  jdbcTemplate.update("Update Todo set user=? ")
+-BeanPropertyRowMapper
+  new BeanPropertyRowMapper(Todo.class)
+or (if database & class names don't match)
+  class TodoMapper implements RowMapper<Todo> {
+    public Todo mapRow(ResultSet rx, int rowNum) throws SQLException {
+        Todo todo = new Todo();
+        todo.setId(rs.getInt("id");
+        return todo;
+    }
+  }
+
+  return jdbcTemplater.query("SELECT * From TODO where user = ?", new Object[]{ user},new TodoMapper());
+  =========
+  Hibernate
+  =========
+  @Entity on POJOs - optional @Table
+  @Id, @GeneratedValue optional @Column
+
+  @PersistenceContext
+  private EntityManager em
+
+  void updateTodo(Todo todo) {
+    em.merge(todo);
+  }

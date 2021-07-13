@@ -1,0 +1,11 @@
+- Model 1 Architecture (No servlets)
+            |-----> JSP1 \
+    Browser |             \Model
+            |-----> JSP2  /
+
+- Model 2 Architecture (MVC)
+    Browser -> Servlet -> view -> model
+                 |-----------------/\
+-  Model 2 Architecture (Front Controller Pattern)
+   https://www.baeldung.com/java-front-controller-pattern
+- BindingResul and @Valid

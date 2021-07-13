@@ -1,0 +1,15 @@
+- spring-boot-autoconfigure.jar : all autoconfiguration
+- logging DEBUG for springframework -> auto config report
+- actuators also show auto config report
+- spring-boot-starter-[tomcat|jetty|undetow]
+- @Externalize configuration:
+
+   @Component
+   @ConfigurationProperties("basic")
+   class BasicConfig {
+        String val;
+   }
+
+- actuators : /env, /metric etcs (HAL browser >2.0 /actuators now /applictaion)
+- org.springframework.boot.actuate.health.HealthIndicator;
+- commandLineRunner is an interface. Use it to say populate some data before launch of spring app.

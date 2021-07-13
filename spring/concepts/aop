@@ -1,0 +1,24 @@
+@Aspect
+@Component
+class MyAspect {
+    @Before("execution(* MyService.*(..))") // any method with any argument on MyService class
+    public void before (JoinPoint joinPoint) {
+    sout("Before" +  joinPoint.getSignature().getName()  + joinPoint.getArgs());
+    }
+}
+
+@Around advice
+==
+Advice - specific code that you want to execute in the method
++ PointCut - execution(* MyService.*(..))"
+====
+= Aspect
+==
+
+JoinPoint is the result of one excution (so is passed as arg)
+Weaving
+Weaver -Spring AOP vs AspectJ
+AspectJ
+https://www.baeldung.com/spring-aop-advice-tutorial
+
+@ControllerAdvice

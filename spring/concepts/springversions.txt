@@ -1,0 +1,7 @@
+1. Spring 2.5 = annotation driver configuration support
+2. Spring 3.0 made great use of Java 5
+3. Spring 4.0 - Java 8 features. @RestController. 4.1 - supprts JCache annotations (JSR-107)
+5. Spring 5.0 - Functional web framework, jigsaw, reactive programming, kotlin
+
+BOM: Build of material
+https://www.baeldung.com/spring-maven-bom

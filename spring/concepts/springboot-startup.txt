@@ -1,0 +1,26 @@
+https://alexecollins.com/spring-boot-performance/
+https://github.com/alexec/spring-boot-performance
+
+The @SpringBootApplication annotation implies the @EnableAutoConfiguration annotation. This enables auto-configuration. This can load components you don't need, slowing application start-up and increasing memory and CPU usage. Lets look at how to use this in a more controlled fashion.
+
+If you start your application using -Ddebug it'll print a report of the components it auto-configures (mvn spring-boot:run -Ddebug).
+
+Look for "positive matches" and Update your configuration to explicitly import them, and run your tests to make sure everything is OK.
+
+@Configuration
+@Import({
+        DispatcherServletAutoConfiguration.class,
+        EmbeddedServletContainerAutoConfiguration.class,
+        ErrorMvcAutoConfiguration.class,
+        HttpEncodingAutoConfiguration.class,
+        HttpMessageConvertersAutoConfiguration.class,
+        JacksonAutoConfiguration.class,
+        JmxAutoConfiguration.class,
+        MultipartAutoConfiguration.class,
+        ServerPropertiesAutoConfiguration.class,
+        PropertyPlaceholderAutoConfiguration.class,
+        ThymeleafAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
+        WebSocketAutoConfiguration.class,
+})
+public class SampleWebUiApplication {
