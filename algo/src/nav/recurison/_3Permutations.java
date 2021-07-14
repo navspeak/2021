@@ -6,7 +6,7 @@ public class _3Permutations {
     public static void main(String[] args) {
         List<List<Integer>> perms = getPermutations(new ArrayList<>(Arrays.asList(1,2,3)));
         System.out.println(Arrays.deepToString(perms.toArray()));
-        printPermutations("abcd".toCharArray(), 0);
+        printPermutations("abc".toCharArray(), 0);
     }
 
 

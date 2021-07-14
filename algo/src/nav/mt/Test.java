@@ -23,7 +23,7 @@ public class Test {
         System.out.println(balanced);
     }
 
-    static class Money {
+    static class Money implements Comparable<Money> {
         int amount;
         String currencyCode;
 
@@ -42,6 +42,11 @@ public class Test {
             boolean currencyCodeEquals = (this.currencyCode == null && other.currencyCode == null)
                     || (this.currencyCode != null && this.currencyCode.equals(other.currencyCode));
             return this.amount == other.amount && currencyCodeEquals;
+        }
+
+        @Override
+        public int compareTo(Money o) {
+            return Integer.compare(this.amount, o.amount);
         }
     }
 

@@ -1,4 +1,4 @@
-package nav.popularAlgo;
+package nav.graph;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -2,10 +2,10 @@ package nav.misc;
 
 import java.util.*;
 // Next greatest
-public class DailyTemp {
+public class NextHighest {
 
     public static void main(String[] args) {
-        System.out.println(Arrays.toString(new DailyTemp().dailyTemperatures(new int[]{73, 74, 75, 71, 69, 72, 76, 73})));
+        System.out.println(Arrays.toString(new NextHighest().dailyTemperatures(new int[]{73, 74, 75, 71, 69, 72, 76, 73})));
     }
 
     public int[] dailyTemperatures(int[] temperatures) {

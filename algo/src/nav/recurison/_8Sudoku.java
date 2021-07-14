@@ -9,6 +9,7 @@ public class _8Sudoku {
     static final int COLS = 9;
     static final int GRID = 3;
     static final int[][] board = new int[ROWS][COLS];
+    // Nick White's solution
     public boolean isValidSudoku(char[][] board) {
         HashSet<String> seen = new HashSet<>();
 

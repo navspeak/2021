@@ -9,6 +9,19 @@ public class _10UniquePathIII {
         System.out.println(ways);
     }
 
+    /*
+    On a 2-dimensional grid, there are 4 types of squares:
+
+1 represents the starting square.  There is exactly one starting square.
+2 represents the ending square.  There is exactly one ending square.
+0 represents empty squares we can walk over.
+-1 represents obstacles that we cannot walk over.
+Return the number of 4-directional walks from the starting square to the ending square, that walk over every non-obstacle square exactly once.
+
+
+     */
+
+    // catch is that you have to cover all the cells
     public int uniquePathsIII(int[][] grid) {
 
         int m = grid.length;
@@ -36,8 +49,8 @@ public class _10UniquePathIII {
         int m = grid.length;
         int n = grid[0].length;
 
-        if (x<0 || y<0 || x>=m || y>=n || grid[x][y] == -1 || grid[x][y] == 3) return 0;
-        if (grid[x][y] == 2 ) {
+        if (x<0 || y<0 || x>=m || y>=n || grid[x][y] == -1 || grid[x][y] == 3) return 0; // we choose to mark 3 as visited
+        if (grid[x][y] == 2 ) { // end
             if ( emptyCells == -1)
                 return 1;
             else

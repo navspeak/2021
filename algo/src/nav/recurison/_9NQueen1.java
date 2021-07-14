@@ -3,7 +3,12 @@ package nav.recurison;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+/*
+ [00] [01] [02] [03]
+ [10] [11] [12] [13]
+ [20] [21] [22] [23]
+ [30] [31] [32] [33]
+ */
 public class _9NQueen1 {
     public static void main(String[] args) {
         _9NQueen1 obj = new _9NQueen1();
@@ -49,6 +54,7 @@ public class _9NQueen1 {
         result.add(oneResult);
     }
 
+    // watch Nick White's https://www.youtube.com/watch?v=_NSc3b5BIXc
     private boolean canPlace(int row, int col, int[][] board){
         int n = board.length;
         int[][] dirs = {{-1,-1},{-1,0},{-1,1}};

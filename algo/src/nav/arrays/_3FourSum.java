@@ -81,8 +81,8 @@ public class _3FourSum {
   10 => 6,4
   11 => 7,4
   3 => 3
-  5 =>6,1
-  6=>7,1
+  5 =>6,-1
+  6=>7,-1
 
 
 }
@@ -115,6 +115,7 @@ public class _3FourSum {
                     v.add(new int[]{a,b});
                     return v;
                 });
+
 
             }
 

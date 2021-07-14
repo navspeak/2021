@@ -1,11 +1,11 @@
-package nav.string;
+package nav.recurison;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class ValidIP {
+public class ValidIP_BackTracking {
     public static void main(String[] args) {
         List<String> validIPs = validIPAddresses("1921680");
         System.out.println(Arrays.deepToString(validIPs.toArray()));

@@ -1,14 +1,29 @@
 package nav.arrays;
 
 import java.util.Arrays;
-
-public class TaskScheduler {
+// https://www.youtube.com/watch?v=eGf-26OTI-A&t=505s
+// Nick White
+public class TaskScheduler{
     public int leastInterval(char[] tasks, int n) {
         int time = 0;
         int[] task_map = new int[26];
         for (int i = 0; i< tasks.length; i++){
             task_map[tasks[i] - 'A'] = task_map[tasks[i] - 'A']+1;
         }
+
+        /*
+                AAABBB
+
+                A [Idle][Idle]A [Idle][Idle] A
+                Idle Time = (Freq[A] - 1) * N
+                Try to fit Other tasks in it
+                A [Idle][Idle]A [Idle][Idle] A
+                A  B    [Idle] A  B   [Idle] A  B    => IdleTime = IdleTime - Min(Freq[i],(Freq[A] - 1))
+
+                IdleTime = (3-1)*2 = 4 => 4 - (3,2) = 2
+
+
+         */
 
         Arrays.sort(task_map);
         int max_freq = task_map[25] - 1; // 1st can be done without needing to wait
@@ -20,6 +35,11 @@ public class TaskScheduler {
         }
 
         return idle > 0 ? tasks.length + idle: tasks.length;
+
+    }
+
+    public static void main(String[] args) {
+        TaskScheduler obj = new TaskScheduler();
 
     }
 }

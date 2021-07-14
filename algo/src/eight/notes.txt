@@ -1,0 +1,35 @@
+- Iterator pattern: https://github.com/navspeak/ds/blob/e22f0bfacf3377a3daa05a7356f1e4ddbed0218c/src/LinkedList.java
+- https://www.geeksforgeeks.org/fail-fast-fail-safe-iterators-java/
+(it remove - no error. Collection remove : error)
+===
+        Map<String, String> cityCode = new HashMap<String, String>();
+        Iterator iterator = cityCode.keySet().iterator();
+
+        while (iterator.hasNext()) {
+            System.out.println(cityCode.get(iterator.next()));
+
+            // adding an element to Map
+            // exception will be thrown on next call
+            // of next() method.
+            cityCode.put("Istanbul", "Turkey");
+            }
+            ---
+          ArrayList<Integer> al = new ArrayList<>();
+         Iterator<Integer> itr = al.iterator();
+                 while (itr.hasNext()) {
+                     if (itr.next() == 2) {
+                         // will not throw Exception
+                         itr.remove();
+                     }
+                 }
+
+                 System.out.println(al);
+         itr = al.iterator();
+         while (itr.hasNext()) {
+             if (itr.next() == 3) {
+                 // will throw Exception on
+                 // next call of next() method
+                 al.remove(3);
+             }
+         }
+ ===

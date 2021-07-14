@@ -1,0 +1,11 @@
+Based on: https://github.com/jakblak/socketio-demos/tree/master/chat_after
+- WebSocket is a communication protocol over a TCP connection, which provides a point-to-point communication system.
+- Duplex
+- Bi Directional
+- socket.io is a Java Script library that will upgrade the connection to ws:// or wss:// if possible, or transparently use long polling
+- WebSocket represents a single TCP socket connection, thus eliminating the problem of connection limitation.
+- ws:// => http:// | wss:// => https://
+- 101 = switching protocol
+- https://www.youtube.com/watch?v=i5OVcTdt_OU
+- Don't - if no real time update
+- Polling (short vs long) vs Websocket vs Socket.io

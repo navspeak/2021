@@ -12,6 +12,9 @@ import java.util.stream.IntStream;
 public class Main {
 
     public static void main(String[] args) {
+        Set<Integer> test = new HashSet<>();
+        System.out.println(test.add(5));
+        System.out.println(test.add(5));//false
 
 //        Queue<Integer> q = new LinkedList<>();
 //        q.poll(); // null if empty, remove exception;
@@ -112,7 +115,7 @@ public class Main {
 
         return result;
     }
-
+//https://www.youtube.com/watch?v=6JF-fxiDjIc - Nick White
     private static void treeMapOp() {
         TreeMap<Integer, Integer> map = new TreeMap<>(Comparator.reverseOrder());
         map.put(1,1);
@@ -121,6 +124,7 @@ public class Main {
         map.put(17,4);
         map.put(19,4);
         map.put(81,5);
+        map.replace(81,7);
 
         System.out.println(map.floorEntry(17).getValue());
     }

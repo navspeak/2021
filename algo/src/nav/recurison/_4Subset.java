@@ -54,6 +54,7 @@ public class _4Subset {
            6 110
            7 111
      */
+    
     public static List<List<Integer>> subsets(int[] nums){
         List<List<Integer>> result = new ArrayList<>();
         for(int i = 0; i< (1<<nums.length);i++){

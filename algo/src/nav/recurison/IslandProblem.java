@@ -56,6 +56,26 @@ public class IslandProblem {
 }
 
 class RemoveIsland {
+    /*
+     int[][] input =
+        new int[][] {
+          {1, 0, 0, 0, 0, 0},
+          {0, 1, 0, 1, 1, 1},
+          {0, 0, 1, 0, 1, 0},
+          {1, 1, 0, 0, 1, 0},
+          {1, 0, 1, 1, 0, 0},
+          {1, 0, 0, 0, 0, 1},
+        };
+    int[][] expected =
+        new int[][] {
+          {1, 0, 0, 0, 0, 0},
+          {0, 0, 0, 1, 1, 1},
+          {0, 0, 0, 0, 1, 0},
+          {1, 1, 0, 0, 1, 0},
+          {1, 0, 0, 0, 0, 0},
+          {1, 0, 0, 0, 0, 1},
+        };
+     */
 
     private static int[][] grid;
     private int R;
@@ -86,22 +106,31 @@ class RemoveIsland {
     }
 
     void markLandConnectedToBorder(int x, int y) {
-        if (x < 0 || y < 0 || x >= R || y >= C || grid[x][y] != 1) return;
+        if (x < 0 || y < 0 || x >= R || y >= C || grid[x][y] != 1) return; // out of bounds or just water
+
+        // if it is land but connected to shore, mark as something so that we don't remove it
+        // If borders were connected to land - chek that case aslo
         if (x == 0 || y == 0 || x == R-1 || y == C-1 || grid[x - 1][y] == 2 || grid[x + 1][y] == 2 || grid[x][y - 1] == 2 || grid[x][y + 1] == 2) {
             grid[x][y] = 2;
-        } else return;
-
-        markLandConnectedToBorder(x, y + 1);
-        markLandConnectedToBorder(x, y - 1);
-        markLandConnectedToBorder(x + 1, y);
-        markLandConnectedToBorder(x - 1, y);
-
-
+            markLandConnectedToBorder(x, y + 1);
+            markLandConnectedToBorder(x, y - 1);
+            markLandConnectedToBorder(x + 1, y);
+            markLandConnectedToBorder(x - 1, y);
+        }
 
     }
 }
 
 class MinPassToRemoveNegatives {
+    /*
+    int[][] matrix = new int[][]
+    {{0, -1, -3, 2, 0},
+    {1, -2, -5, -1, -3},
+    {3, 0, 0, -4, -1}};
+    int expected = 3;
+    A -ve int in matrix can be conveted to +ve if 1 or more of its adj is +ve.
+    0 is neither -ve or +ve
+     */
     public int minimumPassesOfMatrix(int[][] matrix) {
         Queue<int[]> queue = new LinkedList<>();
         final int R = matrix.length;
@@ -114,7 +143,7 @@ class MinPassToRemoveNegatives {
                 else if (matrix[i][j] < 0) negatives++;
             }
         }
-        queue.add(new int[]{-1,-1});
+        queue.add(new int[]{-1,-1});  // delimiter
         int count = 0;
         int[][] dirs = {{0,1},{0,-1},{1,0},{-1,0}};
         while (!queue.isEmpty()){

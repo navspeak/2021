@@ -1,8 +1,16 @@
-package nav.popularAlgo;
+package nav.graph;
 
 import java.util.*;
 // O(V+E)logV time and o(V) space
 public class Dijkstras {
+    /*
+             [0]                   [4]
+                 \7/         /3\                             \7/ = [0->7]
+                        [1]
+                \6/           \20/                     1->14, 20
+             [2]     14 >            [14]
+
+     */
     public static void main(String[] args) {
         PriorityQueue<Vertex> heap = new PriorityQueue<>();
         Vertex v1 = new Vertex();
@@ -67,7 +75,7 @@ public class Dijkstras {
         while(!heap.isEmpty()){
             Vertex currVertex = heap.remove();
             int currIndex = currVertex.index;
-            if (visited.add(currIndex) == false) continue;
+            if (visited.add(currIndex) == false) continue; //set.add returns false if present. so this is checking if already visited
             for (int[] edge: edges[currIndex]){
                 Vertex v = new Vertex();
                 v.index = edge[0];

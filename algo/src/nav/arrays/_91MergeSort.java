@@ -45,6 +45,7 @@ public class _91MergeSort {
 
     public int countInversions(int[] array){
         if (array.length <= 1) return 0;
+        // degree of unsortedness
         int count = countInversions(array, 0, array.length -1);
         return count;
     }
