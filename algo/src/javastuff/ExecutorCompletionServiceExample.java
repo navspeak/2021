@@ -1,11 +1,11 @@
-package eight;
+package java;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
 
-public class ExecutorServiceExample {
+public class ExecutorCompletionServiceExample {
     public static void main(String[] args) throws InterruptedException, ExecutionException {
         ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -17,8 +17,8 @@ public class ExecutorServiceExample {
                     return "Worked for 30 secs";
                 },
                 ()->{
-                    TimeUnit.SECONDS.sleep(40);
-                    return "Worked for 40 secs";
+                    TimeUnit.SECONDS.sleep(4);
+                    return "Worked for 4 secs";
                 },
                 ()->{
                     TimeUnit.SECONDS.sleep(50);
@@ -33,29 +33,35 @@ public class ExecutorServiceExample {
         );
 
         //List<Future<String>> futures = executorService.invokeAll(listOfCallables);
-
-        Future<String> submit1 = executorService.submit(listOfCallables.get(0));
-        Future<String> submit2 = executorService.submit(listOfCallables.get(1));
-        Future<String> submit3 = executorService.submit(listOfCallables.get(2));
-
-        executorService.shutdown();// needed to exit
-
-        System.out.println(submit3.get());
-        System.out.println(submit2.get());// would have finished but will have to wait for 3
-        System.out.println(submit1.get());// would have finished but will have to wait for 3 and 2
-
-        System.out.println("----"); // will not exit till we do a shutdown
-
-        executorService.awaitTermination(45, TimeUnit.SECONDS); // 3rd one won't exec
-// OUTPUT:
-        /*
-Worked for 50 secs
-Worked for 40 secs
-Worked for 30 secs
-----
-         */
+//
+//        Future<String> submit1 = executorService.submit(listOfCallables.get(0));
+//        Future<String> submit2 = executorService.submit(listOfCallables.get(1));
+//        Future<String> submit3 = executorService.submit(listOfCallables.get(2));
+//
+//        executorService.shutdown();// needed to exit
+//
+//        System.out.println(submit3.get());
+//        System.out.println(submit2.get());// would have finished but will have to wait for 3
+//        System.out.println(submit1.get());// would have finished but will have to wait for 3 and 2
+//
+//        System.out.println("----"); // will not exit till we do a shutdown
+//
+//        executorService.awaitTermination(45, TimeUnit.SECONDS); // 3rd one won't exec
+//
         // we could do this too:
-        //CompletionService completionService = new ExecutorCompletionService(executorService);
+        CompletionService completionService = new ExecutorCompletionService(executorService);
+        List<Future<String>> futures = new ArrayList<>();
+        futures.add(completionService.submit(listOfCallables.get(0)));
+        futures.add(completionService.submit(listOfCallables.get(1)));
+        futures.add(completionService.submit(listOfCallables.get(2)));
+        executorService.shutdown();
+        try {
+            while (!executorService.isTerminated()) {
+                final Future<String> future = completionService.take();
+                System.out.println(future.get());
+            }
+        } catch (ExecutionException | InterruptedException ex) { }
+
     }
 
 

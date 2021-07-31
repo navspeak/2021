@@ -1,4 +1,4 @@
-package eight;
+package java;
 
 import java.util.concurrent.CountDownLatch;
 //interrupt : https://www.youtube.com/watch?v=-7ZB-jpaPPo

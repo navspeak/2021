@@ -1,4 +1,4 @@
-package eight;
+package java;
 //https://www.baeldung.com/java-static-default-methods
 public class One {
 

@@ -1,8 +1,6 @@
-package nav.mt;
+package java;
 
-import java.util.Objects;
-
-public class Test {
+public class Test2 {
 
     static void changeName(String name) { name = "changedName";}
 

@@ -1,5 +1,6 @@
 - Iterator pattern: https://github.com/navspeak/ds/blob/e22f0bfacf3377a3daa05a7356f1e4ddbed0218c/src/LinkedList.java
 - https://www.geeksforgeeks.org/fail-fast-fail-safe-iterators-java/
+- https://www.baeldung.com/etags-for-rest-with-spring
 (it remove - no error. Collection remove : error)
 ===
         Map<String, String> cityCode = new HashMap<String, String>();

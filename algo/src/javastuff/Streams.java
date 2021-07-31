@@ -1,10 +1,9 @@
-package eight;
+package java;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -29,6 +28,8 @@ public class Streams {
         Deque<Integer> collect1 = IntStream.range(0, 1000)
                 .map(Utils::divideBy5)
                 .mapToObj(Integer::valueOf)//same as boxed
+                .sorted(Comparator.reverseOrder())
+                //.sorted(Comparator.comparingInt(Integer::intValue).reversed())
                 .collect(Collectors.toCollection(ArrayDeque::new));// LinkedList.new
 
 
