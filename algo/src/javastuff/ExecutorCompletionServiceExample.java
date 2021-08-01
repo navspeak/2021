@@ -1,9 +1,11 @@
-package java;
+package javastuff;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class ExecutorCompletionServiceExample {
     public static void main(String[] args) throws InterruptedException, ExecutionException {
@@ -31,6 +33,7 @@ public class ExecutorCompletionServiceExample {
                 }
 
         );
+
 
         //List<Future<String>> futures = executorService.invokeAll(listOfCallables);
 //

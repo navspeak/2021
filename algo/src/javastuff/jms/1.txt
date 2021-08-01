@@ -1,0 +1,42 @@
+Trade-offs
+------------
+performance versus reliability, or transactionality versus horizontal scalability.
+
+Assumptions about Messaging
+-------------------------
+The system will never lose messages
+Messages will be processed in order
+Adding consumers will make the system go faster
+Messages will be delivered exactly once
+
+Messaging System
+----------------
+Defining this interface involves:
+- picking a transport or protocol, such as HTTP, MQTT, or SMTP,
+- agreeing on the shape of the messages to be exchanged between the two systems
+
+Point-to-Point
+--------------
+Queue - Durability (Persistence - both not same. May or not not be persisted) - At least once
+
+- Point-to-point messaging is used when the use case calls for a message to be acted upon once only.
+- e.g. depositing funds into an account or fulfilling a shipping order.
+- We will discuss later on why the messaging system in itself is incapable of providing once-only delivery
+- why queues can at best provide an at-least-once delivery guarantee.
+
+Publish-Subscribe
+--------------
+Topic- NonDurable - At most once delievry
+
+- Point-to-point messaging is used when the use case calls for a message to be acted upon once only.
+- e.g. depositing funds into an account or fulfilling a shipping order.
+- We will discuss later on why the messaging system in itself is incapable of providing once-only delivery
+- why queues can at best provide an at-least-once delivery guarantee.
+
+Hybrid (once-per-interested-party)
+----
+Use cases often call for a hybrid of publish-subscribe and point-to-point messaging, such as when multiple systems each want a copy of a message and require both durability and persistence to prevent message loss.
+
+These cases call for a destination (the general term for queues and topics) that distributes messages much like a topic, such that each message is sent to a distinct system interested in those messages, but where each system can define multiple consumers that consume the inbound messages, much like a queue. The consumption type in this case is once-per-interested-party. These hybrid destinations frequently require durability, such that if a consumer disconnects, the messages that are sent in the meantime are received once the consumer reconnects.
+
+[Read](https://learning.oreilly.com/library/view/understanding-message-brokers/9781492049296/ch02.html#producing-messages-into-a-queue)

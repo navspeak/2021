@@ -1,4 +1,4 @@
-package java.designPatterns;
+package javastuff.designPatterns;
 
 import java.util.function.BiFunction;
 

@@ -1,4 +1,4 @@
-package java;
+package javastuff;
 //https://www.baeldung.com/java-static-default-methods
 public class One {
 

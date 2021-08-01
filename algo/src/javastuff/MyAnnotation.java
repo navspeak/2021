@@ -1,4 +1,4 @@
-package java;
+package javastuff;
 
 import java.lang.annotation.*;
 

@@ -1,4 +1,4 @@
-package java;
+package javastuff;
 
 public class BasicThreadStuff {
     // Threads Lifecycle: https://www.baeldung.com/java-thread-lifecycle

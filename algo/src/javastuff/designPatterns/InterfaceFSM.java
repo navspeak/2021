@@ -1,4 +1,4 @@
-package java.designPatterns;
+package javastuff.designPatterns;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,4 +1,4 @@
-package java.designPatterns;
+package javastuff.designPatterns;
 // behavorial pattern
 // similar to strategy Pattern which is able to switch a strategy invocations of methods
 // Follows  Single Responsibility Principle and Open/Closed Principle

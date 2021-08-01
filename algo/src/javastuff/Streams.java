@@ -1,4 +1,4 @@
-package java;
+package javastuff;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -48,7 +48,7 @@ public class Streams {
                 new City("Kolkata", 30),
                 new City("Sydney", 11),
                 new City("Mexico", 14),
-                new City("Dubai", 43)
+                new City("Dubai", 45)
         ));
 
 
@@ -110,6 +110,12 @@ public class Streams {
 
         Stream.of("dog", "cat")             // stream of 2 Strings
                 .flatMapToInt(s -> s.chars()) ;  // stream of 6 ints:      [d, o, g, c, a, t]
+
+        System.out.println("------------");
+        Stream.of("dog", "cat")
+                .flatMapToInt(s->s.chars())
+                .mapToObj(c->(char)c)
+                .forEach(System.out::println);
 
         //https://www.baeldung.com/java-flatten-nested-collections
         List<Integer> l1 = Arrays.asList(1,2,3);

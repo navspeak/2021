@@ -1,4 +1,4 @@
-package java;
+package javastuff;
 
 public class Test2 {
 

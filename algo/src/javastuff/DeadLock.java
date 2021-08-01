@@ -1,11 +1,9 @@
-package java;
+package javastuff;
 
 import lombok.SneakyThrows;
 
-import java.lang.annotation.Inherited;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
-import java.math.BigDecimal;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;

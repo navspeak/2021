@@ -4,7 +4,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class Three {
+public class InputStreamEx {
     public static void main(String[] args) throws IOException {
         //one();
         String hello = "Hello world!";
@@ -33,7 +33,7 @@ public class Three {
             os.write(headers);
         }
 
-        try(InputStream is = Files.newInputStream(path)){
+        try(java.io.InputStream is = Files.newInputStream(path)){
             byte[] bytes = is.readAllBytes();
             for(byte b: bytes){
                 System.out.printf("0x%x\n", b);
