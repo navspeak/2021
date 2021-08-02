@@ -58,16 +58,16 @@ public class ReadingFile {
         RandomAccessFile randomAccessFile = new RandomAccessFile("files/data.txt", "r");
 
         int bytes = 0;
-        int    val = randomAccessFile.readLine();
-        System.out.println(val);
-        bytes = bytes + 4;
-        randomAccessFile.skipBytes(bytes);
-        val = randomAccessFile.readInt();
-        System.out.println(val);
-        bytes = bytes + 4;
-        randomAccessFile.skipBytes(bytes);
-        val = randomAccessFile.readInt();
-        System.out.println(val);
+        //int    val = randomAccessFile.readLine();
+//        System.out.println(val);
+//        bytes = bytes + 4;
+//        randomAccessFile.skipBytes(bytes);
+//        val = randomAccessFile.readInt();
+//        System.out.println(val);
+//        bytes = bytes + 4;
+//        randomAccessFile.skipBytes(bytes);
+//        val = randomAccessFile.readInt();
+//        System.out.println(val);
 
 //        try (Stream<String> lines = Files.lines(Path.of("files/page_"+0+".txt"))){
 //            lines.map(Integer::valueOf).forEach(System.out::println);

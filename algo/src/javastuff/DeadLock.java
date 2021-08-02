@@ -11,7 +11,10 @@ import java.util.concurrent.locks.ReentrantLock;
 public class DeadLock {
 
     // use: kill -3 pid or jstack pid
-
+// https://blog.payara.fish/identifying-deadlocks-in-thread-dumps-from-payara-server-part-2
+    // Look for BLOCKED in thread dump
+    //https://www.baeldung.com/java-thread-lifecycle
+    //https://stackoverflow.com/questions/15680422/difference-between-wait-and-blocked-thread-states
 
     /*
     1. If threads acquire locks in order that creats circular dependency

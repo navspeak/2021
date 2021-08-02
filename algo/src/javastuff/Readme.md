@@ -23,6 +23,7 @@
    - Similarity: Both are native method. Both put thread in non-running state (Wait -> Waiting, Sleep -> Timed waiting)
 - join: also makes thread go into WAITING state:
 ```java
+class Test{
  public final synchronized void join(long millis)
     throws InterruptedException {
         long base = System.currentTimeMillis();
@@ -47,6 +48,7 @@
             }
         }
     }
+}
 ```
 ### [Interrupted Exception](https://www.baeldung.com/java-interrupted-exception)
 - The interrupt() method is a (non static) method of the Thread class - calls interrupt0 which is native
@@ -82,11 +84,8 @@ class Demo implements Runnable {
         keepRunning.set(false);
     }
 }
-
-
-
-}
-
+```
+```
 public class MyThread implements Runnable {
     private Thread worker;
     private int interval = 100;
@@ -146,12 +145,12 @@ public class MyThread implements Runnable {
  - conditionMet.signal() => condition is met, so signal all awaiting on condition to reacquire the lock
  - [Producer Consumer](../../images/LockConditions.PNG)
  
- ### [RewadWriteLock](https://www.youtube.com/watch?v=7VqWkc9o7RM)
+ ### [ReadWriteLock](https://www.youtube.com/watch?v=7VqWkc9o7RM)
  - Lock lock = new ReentrantLock();
  - ReentrantLock.ReadLock readLock = lock.readLock();
  - ReentrantLock.WriteLock writeLock = lock.writeLock();
  - If 1 thread acquired writeLock, only that thread can have the WriteLock, all threads trying for writeLock or ReadLock will wait and be blocked.
- - If 1 thread acquired readLock, anyother thread trying for ReadLock can also acquire Readlock, but any thread trying to acqure writeLock will be blocked.
+ - If 1 thread acquired readLock, anyother thread trying for ReadLock can also acquire Readlock, but any thread trying to acquire writeLock will be blocked.
  - Conditions allowed on writeLocks
  - usecase: frequent reads and infequent writes
  
