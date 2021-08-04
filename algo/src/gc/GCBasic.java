@@ -1,10 +1,10 @@
 package gc;
 
 import java.util.EnumMap;
-
+//https://www.youtube.com/watch?v=k4vkd0ahWjQ
 public class GCBasic {
     String PermGenTuning = "java -XX:MaxPermSize=256m com.mycompany.MyApplication";
-    String MetaSpace = "Located in native memort. Does not interfere w/regular heap obj" +
+    String MetaSpace = "Located in native memory. Does not interfere w/regular heap obj" +
             "default size = amount of native memory available to the Java Process";
     String MetaSpaceTuning = "java -XX:MaxMetaspaceSize=256m com.nav.demo.GCDemo";
     // https://plumbr.io/handbook/garbage-collection-in-java
@@ -128,6 +128,8 @@ public class GCBasic {
     void Shenondoah(){
         // Lower average latency
         // Higher footprint
+        // concurrennt evacuation - Load Reference Barrier (cost of Thruput)
+        // ms STW - upto 100 ms
     }
     //https://www.overops.com/blog/garbage-collectors-serial-vs-parallel-vs-cms-vs-the-g1-and-whats-new-in-java-8/
     // String interning

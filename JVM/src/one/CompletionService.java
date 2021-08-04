@@ -47,9 +47,15 @@ public class CompletionService {
         Future<String> f3 = completionService.submit(tasks.get(2));
 
 
-        for (int i = 0; i < 5;i++) {
+        /*for (int i = 0; i < 5;i++) {
             System.out.println(completionService.take().get());
-        }
+        }*/
+		try {
+            while (!executorService.isTerminated()) {
+                final Future<String> future = completionService.take();
+                System.out.println(future.get());
+            }
+        } catch (ExecutionException | InterruptedException ex) { }
 
 
     }

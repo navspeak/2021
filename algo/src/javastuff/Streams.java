@@ -131,6 +131,25 @@ public class Streams {
         "abc".chars().map(x->(char)x).forEach(System.out::println); // 97,98,99
         "abc".chars().mapToObj(x->(char)x).forEach(System.out::println); //a,b.c
         //System.out.println(Character.forDigit('9', 10)); => 9 as char
+
+        List<List<Integer>> lisOfIntegerList = new ArrayList<>();
+        lisOfIntegerList.add(Arrays.asList(1,2,3));
+        lisOfIntegerList.add(Arrays.asList(11,22,33));
+        lisOfIntegerList.add(Arrays.asList(111,222,333));
+
+        String a = lisOfIntegerList.stream().map(x->Arrays.toString(x.toArray())).
+                collect(Collectors.joining("|"));
+        String b = lisOfIntegerList.stream().
+                flatMap(Collection::stream)
+                .map(x-> x.toString())
+                .collect(Collectors.joining("|"));
+
+        System.out.println(a);//[1, 2, 3]|[11, 22, 33]|[111, 222, 333]
+        System.out.println(b);//1|2|3|11|22|33|111|222|333
+
+        Stream<String> stringStream = lisOfIntegerList.stream().map(x -> Arrays.toString(x.toArray()));
+        Stream<Integer> integerStream = lisOfIntegerList.stream().flatMap(x->x.stream());
+
     }
 
     public static class Utils {
