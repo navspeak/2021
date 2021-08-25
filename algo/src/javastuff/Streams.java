@@ -147,7 +147,9 @@ public class Streams {
         System.out.println(a);//[1, 2, 3]|[11, 22, 33]|[111, 222, 333]
         System.out.println(b);//1|2|3|11|22|33|111|222|333
 
+        //   <R> Stream<R> map(Function<? super T, ? extends R> mapper);
         Stream<String> stringStream = lisOfIntegerList.stream().map(x -> Arrays.toString(x.toArray()));
+        //    <R> Stream<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper);
         Stream<Integer> integerStream = lisOfIntegerList.stream().flatMap(x->x.stream());
 
     }

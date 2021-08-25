@@ -1,12 +1,13 @@
 package javastuff;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
+
 //interrupt : https://www.youtube.com/watch?v=-7ZB-jpaPPo
 public class CountDownLatchEx {
     static class Decrementer implements Runnable {
         CountDownLatch latch = null;
-
-        public Decrementer(CountDownLatch latch) {
+         public Decrementer(CountDownLatch latch) {
             this.latch = latch;
         }
 

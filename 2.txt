@@ -1,0 +1,6 @@
+1. Find the 3rd highest salary from Emp table
+- SELECT salary from EMP e order by salary DESC LIMIT 2,1
+
+2. SELECT Nth Highest salary from the table without using TOP/LIMIT
+
+- SELECT salary from EMP e1 where N-1 = (SELECT COUNT(DISTINT salary) FROM EMP e2 where e2.salary > e1.salary)

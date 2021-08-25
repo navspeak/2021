@@ -2,7 +2,6 @@ package nav.arrays;
 
 import java.util.*;
 import java.util.LinkedList;
-import java.util.stream.Collectors;
 
 public class _3FourSum {
 
@@ -11,7 +10,7 @@ public class _3FourSum {
         //List<Integer[]> res = fourNumberSum(new int[]{1,0,-1,0,-2,2}, 0);
         //List<List<Integer>> res = fourNumberSum(new int[]{2,2,2,2,2}, 8);
         System.out.println(Arrays.deepToString(threeSum(new int[]{-1,0,1,2,-1,-4}).toArray()));
-        List<List<Integer>> res = fourNumberSum(new int[]{-5,5,4,-3,0,0,4,-2}, 4);
+        List<List<Integer>> res = fourSum(new int[]{-5,5,4,-3,0,0,4,-2}, 4);
         res.forEach(list -> System.out.println(Arrays.toString(list.toArray())));
 
     }
@@ -93,26 +92,21 @@ public class _3FourSum {
      */
     // Avg Time complexity O(n^2)
     // Worst say input array is [4,1,-1,4,3,-3] & target = 0,the second loop will have n pairs so in that case Time complexity = O(n^3)
-    public static List<List<Integer>> fourNumberSum(int[] array, int targetSum) {
-        Map<Integer, Set<int[]>> map = new HashMap<>();
+     public static List<List<Integer>> fourSum(int[] array, int targetSum) {
+        Map<Integer, List<List<Integer>>> map = new HashMap<>();
         Set<List<Integer>> result = new HashSet<>();
         for(int i = 1; i < array.length; i++){
             for(int j = 0; j<i; j++){
-                final int a = array[j];
+                final int a = array[j]; // a < b
+                final int indexA = j;
                 final int b = array[i];
+                final int  indexB = i;
 
-//                List<int[]> v = new ArrayList<>();
-//                if (map.containsKey(a+b)){
-//                    v = map.get(a+b);
-//                }
-//                v.add(new int[]{a,b});
-//                map.put(a+b, v);
-
-                map.compute(a+b, (k,v) -> { //same thing as above
+                map.compute(a+b, (k,v) -> {
                     if (v == null) {
-                        v = new HashSet<>();
+                        v = new ArrayList<>();
                     }
-                    v.add(new int[]{a,b});
+                    v.add(Arrays.asList(a,b));
                     return v;
                 });
 
@@ -121,19 +115,21 @@ public class _3FourSum {
 
             for(int j = i + 2; j < array.length; j++){
                 final int a = array[i+1];
+                final int indexA = i+1;
                 final int b = array[j];
+                final int  indexB = j;
                 int remSum = targetSum - a - b;
                 if (map.containsKey(remSum)){
-
                     map.get(remSum).forEach( ints -> {
-                        List<Integer> quadruples = Arrays.asList(ints[0], ints[1], a, b);
-                        quadruples.sort(Comparator.naturalOrder());
-                        result.add(quadruples);
+                        result.add(new ArrayList(Arrays.asList(ints.get(0), ints.get(1), a, b)));
                     });
                 }
+                while(j < array.length -1 && array[j] == array[j+1]) {
+                    j++;
+                }
             }
-        }
 
+        }
         return List.copyOf(result);
     }
 

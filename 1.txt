@@ -1,0 +1,130 @@
+- BOOLEAN Operators
+  1. AND, OR, BETWEEN, LIKE, IN, IS (with NULL) and IS NOT (with NULL)
+
+- Order By 
+  1. SELECT p.fName, p.lName from Person p WHERE p.age> 10 ORDER BY p.lName ASC (or DSC)
+
+- Set Function:
+  1. COUNT(COL_NAME) - non null, COUNT(*) - includes NULL
+  2. MAX, MIN, AVG, SUM with col_name - does not include null
+     --
+     SELECT COUNT(DISTINCT p.fName, p.lName) from Person p WHERE p.age> 10 ORDER BY p.lName ASC (or DSC)
+     --
+- GROUP BY and HAVING
+   1. What is thecount of unique first names amount my contacts that appear at least 5 times
+    --
+    SELECT COUNT(DISTINT p.fName), p.fName FROM person p GROUP BY p.fName HAVING COUNT(DISTINT p.fName) >=5;
+    or
+    SELECT COUNT(DISTINT p.fName) as FirstNameCount, p.fName FROM person p GROUP BY p.fName HAVING FirstNameCount >=5;
+    --
+=======================
+Person
+======
+person_id | fName  | lName     | contacted_Num | date_last_contacted
+----------------------------------------------------------------
+1          Jon       Flander     5               2017-09-14 11:43
+2          Shannon   Ahern       0               2017-08-14 11:43
+3          Fritz     Onion       1               2017-07-14 11:43 <= has no email
+4          Jon       Ahern       10              2017-07-14 11:43 <= has no email
+
+Email_table
+======
+email_address_id | email_address_person_id | email
+----------------------------------------------------------------
+1       		1                    jon.flanders@email.com
+2       		1                    jon.f@email.com
+4       		3                    frotzO@email.com
+5       		NULL                 aaron.flanders@email.com <= has no Person entry
+
+
+
+Joins
+====
+1. CROSS-JOIN: all rows from both table, no where clause (CROSS is implied) => Cartesian product, inefficient
+   SELECT p.fName, e.email FROM person p, email_table e;
+2. INNER-JOIN: doesn't deal with NULL
+   - Most typical join. Matches column in first table to second, Primary Key to foreign key is most common
+   - What are my contact's email addresses?
+   ---
+   SELECT p.fName, p.lName, e.email_address 
+   FROM person p 
+   INNER JOIN email_table e 
+   ON p.person_id = e.email_address_person_id
+   ---
+   Gets only three rows. Non match ignored.
+   fName    | lName  | email
+   ---------------------   
+   Jon       Flander jon.flanders@email.com
+   Jon       Flander jon.f@email.com
+   Fritz     Onion   frotzO@email.com
+3. OUTER JOINS: FULL OUTER, LEFT (all rows from left, null from right), RIGHT
+   ---
+   SELECT p.fName, p.lName, e.email_address 
+   FROM person p 
+   LEFT OUTER JOIN email_table e 
+   ON p.person_id = e.email_address_person_id
+   ---
+   fName    | lName  | email
+   ---------------------   
+   Jon       Flander jon.flanders@email.com
+   Jon       Flander jon.f@email.com
+   Fritz     Onion   frotzO@email.com
+   Shannon   Ahern    NULL
+   Jon       Ahern    NULL
+
+   ==========
+   SELECT p.fName, p.lName, e.email_address 
+   FROM person p 
+   RIGHT OUTER JOIN email_table e 
+   ON p.person_id = e.email_address_person_id
+   ---
+   fName    | lName  | email
+   ---------------------   
+   Jon       Flander jon.flanders@email.com
+   Jon       Flander jon.f@email.com
+   Fritz     Onion   frotzO@email.com
+   NULL      NULL    aaron.flanders@email.com 
+ 
+NOTE FULL outer join is merge of above two. Mysql emulatesit by UNION
+
+SELECT p.fName, p.lName, e.email_address 
+   FROM person p 
+   LEFT OUTER JOIN email_table e 
+   ON p.person_id = e.email_address_person_id
+	UINION DISTINCT
+SELECT p.fName, p.lName, e.email_address 
+   FROM person p 
+   RIGHT OUTER JOIN email_table e 
+   ON p.person_id = e.email_address_person_id
+
+  fName    | lName  | email
+   ---------------------   
+   Jon       Flander jon.flanders@email.com
+   Jon       Flander jon.f@email.com
+   Fritz     Onion   frotzO@email.com
+   Shannon   Ahern    NULL
+   Jon       Ahern    NULL
+   NULL      NULL    aaron.flanders@email.com 
+
+4. SELF JOIN
+===
+To Fetch Duplicate Rows:
+
+SELECT
+name, email, COUNT(*)
+FROM 
+users
+GROUP BY
+name, email
+HAVING COUNT(*) > 1
+To Delete the Duplicate Rows:
+
+DELETE users 
+WHERE rowid NOT IN 
+(SELECT MIN(rowid)
+FROM users
+GROUP BY name, email);      
+ 
+
+   
+  

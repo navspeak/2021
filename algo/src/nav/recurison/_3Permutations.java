@@ -37,6 +37,8 @@ public class _3Permutations {
       a.bcd
     ab.cd
   abcd  acbd
+  Time complexity: O(n * n!).
+Space complexity: O(n!).
 
      */
     private static void printPermutations(char[] str, int i /*, List<String> result*/) {

@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Deque;
 import java.util.List;
 
-public class Reconstruct {
+public class Reconstruct { // from preorder
     public static void main(String[] args) {
         List<Integer> list = Arrays.asList(10,4,2,1,5,17, 19, 18);
 

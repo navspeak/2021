@@ -5,6 +5,7 @@ import java.util.Arrays;
 public class _92BinarySearch {
 
     //https://www.youtube.com/watch?v=eT0UqrYuqbg
+    //https://www.youtube.com/watch?v=eT0UqrYuqbg&t=521s - Nick White
     /*
         row = array.length ; col= array[0].length
         left = 0; right = col -1; mid = right + (left -right)/2
@@ -23,6 +24,7 @@ public class _92BinarySearch {
         System.out.println(Arrays.toString(getRange(new int[]{1, 20, 30, 70, 80},75))); //3,4
         System.out.println(Arrays.toString(getRange(new int[]{1, 20, 30, 70, 80},80))); //4,4
         System.out.println(Arrays.toString(getRange(new int[]{1, 20, 30, 70, 80},85))); //4,5
+
 
         System.out.println(Arrays.toString(searchForRange(new int[] {0, 1, 21, 33, 45, 45, 45, 45, 45, 45, 61, 71, 73}, 45)));
         //===

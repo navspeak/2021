@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+// MemoryLeak jmap histogram
 public class BasicThreadStuff {
     // Threads Lifecycle: https://www.baeldung.com/java-thread-lifecycle
     // interuppted: https://dzone.com/articles/why-do-we-need-threadcurrentthreadinterrupt-in-int
@@ -17,6 +18,8 @@ public class BasicThreadStuff {
     // When we invoke join on a thread the calling thread goes into WAITING state until referenced thread terminates
     // join() method may also return if the reference thread was interrupted
 
+
+    // Ideal Thread Pool size = no. of cores * [1 + wait_time/cpu_time] (for CPU bound wait_time ~ 0)
     public static void main(String[] args) throws InterruptedException {
         AtomicBoolean running = new AtomicBoolean(true);
         AtomicBoolean stopped = new AtomicBoolean(false);

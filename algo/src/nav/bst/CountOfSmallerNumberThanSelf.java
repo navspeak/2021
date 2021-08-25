@@ -3,7 +3,7 @@ package nav.bst;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+//MergeSort Merge Sort
 public class CountOfSmallerNumberThanSelf {
     //https://leetcode.com/problems/count-of-smaller-numbers-after-self/
     // TimeExceeded in leetcode

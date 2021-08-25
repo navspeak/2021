@@ -1,9 +1,6 @@
 package nav.recurison;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class _4Subset {
@@ -23,9 +20,12 @@ public class _4Subset {
 //        System.out.println(Arrays.deepToString(dup.toArray()));//[[Apple, Orange, X], [Lion, Tiger, X], [Apple, Orange, X], [Lion, Tiger, X]]
 //        System.out.println(Arrays.deepToString(subsets(new int[]{1,2,3}, 0).toArray()));
 //        System.out.println(Arrays.deepToString(subsets(new int[]{1,2,3}).toArray()));
-        System.out.println(Arrays.deepToString(subsets(new int[]{4,4,4,1,4}).toArray())); //     Arrays.sort(nums); // important for subset with duplicate
+        System.out.println(Arrays.deepToString(subsets(new int[]{4,4,4,1,4}).toArray()));
+        System.out.println(Arrays.deepToString(subsetsWithDup(new int[]{4,4,4,1,4}).toArray())); //     Arrays.sort(nums) & use set; // important for subset with duplicate
+
     }
 
+    //T: O(2^n) and S: O(n)
     public static List<List<Integer>> subsets(int[] nums, int i){
 
         if (i == nums.length ) {
@@ -68,7 +68,35 @@ public class _4Subset {
         }
         return result;
     }
+
+    public static List<List<Integer>> subsetsWithDup(int[] nums) {
+        Arrays.sort(nums); // important
+        return List.copyOf(subsetsWithDup(nums, 0));
+
+    }
+
+    public static Set<List<Integer>> subsetsWithDup(int[] nums, int index){
+        Set<List<Integer>> result = new HashSet<>();
+
+        if (index == nums.length){
+            result.add(new ArrayList<>());
+            return result;
+        }
+
+        int curr = nums[index];
+        Set<List<Integer>> subResult = subsetsWithDup(nums, index+1);
+        result.addAll(subResult);
+        for(List<Integer> list: subResult){
+            List<Integer> newList = new ArrayList<>(list);
+            newList.add(curr);
+            result.add(newList);
+        }
+
+        return result;
+    }
 }
+
+
 /*
 [] = []
 

@@ -191,6 +191,14 @@ class TestLinkedList {
         return one;
     }
 
+//    public ListNode reverseList(ListNode head) {
+//        if (head == null || head.next == null) return head;
+//        ListNode rev = reverseList(head.next);
+//        head.next.next =head;
+//        head.next = null;
+//        return rev;
+//    }
+
     public static void main(String[] args) {
         LinkedList head = null;
         for(int i = 0; i <= 10; i++) {
@@ -312,3 +320,34 @@ class TestLinkedList {
 
     }
 }
+/*
+class Solution {
+    private int len(ListNode head){
+        ListNode ptr = head;
+        int len = 0;
+        while(ptr != null){
+           ptr = ptr.next;
+           len++;
+        }
+        return len;
+    }
+    public ListNode reverseKGroup(ListNode head, int k){
+       return reverseKGroup(head, k, len(head));
+    }
+    private ListNode reverseKGroup(ListNode head, int k, int len ) {
+        if (head == null || head.next == null || len < k) return head;
+        ListNode p1 = null, p2 = head;
+        int i = 0;
+        while(p2 != null && i < k){
+            ListNode tmp = p2.next; // 1->2->3->4; i=0 l = 1
+            p2.next = p1;
+            p1 = p2;
+            p2= tmp;
+            i++;     // 1<-2 3->4->5; i=1, l =1, p1=2, p2=3
+        }
+
+        head.next = reverseKGroup(p2, k, len - k);
+        return p1;
+    }
+}
+ */
