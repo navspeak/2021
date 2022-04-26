@@ -5,8 +5,8 @@ Power of 2 => x & -x  == x or x & (x - 1) == 0
 (*) x & (x-1) sets right most bit to zero
 https://leetcode.com/problems/number-of-1-bits/
 ----
-(*) n&1 = get the right most bit
-(*) ((n >> i) & 1)  == 1 check if ith bit is set to 1
+(*) n&1 = get the right most bit 
+(*) ((n >> i) & 1)  == 1 check if ith bit is set to 1 or  ((n >> i) & 1) | n  == n
 
 https://leetcode.com/problems/reverse-bits/
 ----
