@@ -1,0 +1,11 @@
+AWS Cognito uses OAuth2
+
+AWS Cognito (Service Provider) with Azure AD(IdP)
+https://medium.com/@zippicoder/setup-aws-cognito-user-pool-with-an-azure-ad-identity-provider-to-perform-single-sign-on-sso-7ff5aa36fc2a
+
+SAML (Security Assertion Markup Language) — is a standard for securely exchanging user’s identity between SAML authority (called an identity provider or IdP)
+and SAML consumer (called a service provider or SP). Thus defining 3 roles: the principal (user), identity provider and service provider. 
+SAML eliminates passing passwords. Instead, it uses cryptography and digital signatures to pass a secure sign-in token from an identity provider to a service provider. 
+Is one of the most widely used protocols when it comes to Single sign-on implementation.
+
+ 
