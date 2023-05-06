@@ -8,4 +8,5 @@ and SAML consumer (called a service provider or SP). Thus defining 3 roles: the 
 SAML eliminates passing passwords. Instead, it uses cryptography and digital signatures to pass a secure sign-in token from an identity provider to a service provider. 
 Is one of the most widely used protocols when it comes to Single sign-on implementation.
 
- https://www.youtube.com/watch?v=sdEFwkVJVno
+ https://www.youtube.com/watch?v=sdEFwkVJVno - Cognito with Postman
+ https://www.youtube.com/watch?v=x1DnT1LRaaQ - Cognito with Azure AD
