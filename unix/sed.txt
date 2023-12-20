@@ -11,8 +11,15 @@ sed 'p' file.txt
 sed -n 'p' file.txt
 => supress stdout
 
-sed -n ' 1,5 p' file | ' 5,$' => 5 to end
+sed -n ' 1,5 p' file
 =>lines 1 to 5 (first 5 lines)
+sed -n ' 5,$ p' => 5 to end
+===
+Capturing Group
+$ echo "endpoint.component.component1.api.url=http://localhost:8080/component1/path" | sed -n -E 's/^endpoint\.(\w+)\.(\w+)\.(\w+)\.url=http:\/\/localhost:([0-9]+)\/.*/\2 => \4/p'
+$ echo "endpoint.component.component1.api.url=http://localhost:8080/component1/path" | sed -n -E 's/^endpoint\.(\w+)\.([^.]+)\.([^.]+)\.url=http:\/\/localhost:([0-9]+)\/.*/\2 => \4/p'
+component1 => 8080
+Note: sed -n -E 's/(regex1)(regex2)/\1=>\2' file 
 
 sed -n ' /^line/ p' file
 ===
