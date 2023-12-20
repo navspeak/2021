@@ -1,6 +1,5 @@
 $ sed -i.commented '/^#/d;/^$/d' lineswithcomments_blank.txt
-=> modifies lineswithcomments_blank.txt
-=> creates lineswithcomments_blank.txt.commented with original file
+=> -i.commented -> modifies orig file in place  & creates backup as .txt.commented 
 => /^#/d - delete lines starting with #
 => /^$/d - deletes empty lines (with no white spaces)
 => /^\s*/d - deletes empty lines with white spaces too
