@@ -25,6 +25,19 @@ $ sed -n -E 's/(.+)=http:\/\/(\w+):([0-9]+).*/\3/ p' lineswothcomments_blank.txt
 8080
 8080
 
+file:
+===
+startend
+start end
+endpoint.component.component1.api.url=http://localhost:8080/component1/path
+endpoint.component.component2.api.url=http://localhost:8080/component2/path
+ endpoint.component.component1.api.url=http://localhost:8080/component1/path
+        endpoint.component.component2.api.url=http://localhost:8080/component2/path
+
+ awk -F'[=.:/]' '/^[[:space:]]*endpoint/ {printf "%-5s => %s\n", $2, $10}' lineswothcomments_blank.txt
+--> delimiter are =, ., :, /
+--> $0 - whole line
+
 
 sed -n ' /^line/ p' file
 ===
