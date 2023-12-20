@@ -21,6 +21,11 @@ $ echo "endpoint.component.component1.api.url=http://localhost:8080/component1/p
 component1 => 8080
 Note: sed -n -E 's/(regex1)(regex2)/\1=>\2' file 
 
+$ sed -n -E 's/(.+)=http:\/\/(\w+):([0-9]+).*/\3/ p' lineswothcomments_blank.txt
+8080
+8080
+
+
 sed -n ' /^line/ p' file
 ===
 grep -v '4$' file
